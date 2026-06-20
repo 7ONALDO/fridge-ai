@@ -1,0 +1,56 @@
+{
+  "exp1": [
+    {
+      "name": "exp1_yolov8n",
+      "model": "yolov8n.pt",
+      "map50": 0.8233,
+      "map5095": 0.5398,
+      "recall": 0.8363,
+      "precision": 0.8701,
+      "time_min": 20.0,
+      "best_pt": "/kaggle/working/ablation/exp1_yolov8n/weights/best.pt",
+      "gpu_ms": 6.9,
+      "params_m": 3.2,
+      "size_mb": 6.2
+    },
+    {
+      "name": "exp1_yolov8s",
+      "model": "yolov8s.pt",
+      "map50": 0.8279,
+      "map5095": 0.5494,
+      "recall": 0.8628,
+      "precision": 0.8879,
+      "time_min": 38.2,
+      "best_pt": "/kaggle/working/ablation/exp1_yolov8s/weights/best.pt",
+      "gpu_ms": 10.7,
+      "params_m": 11.2,
+      "size_mb": 21.5
+    },
+    {
+      "name": "exp1_yolov11n",
+      "model": "yolo11n.pt",
+      "map50": 0.8255,
+      "map5095": 0.5477,
+      "recall": 0.8473,
+      "precision": 0.8719,
+      "time_min": 28.6,
+      "best_pt": "/kaggle/working/ablation/exp1_yolov11n/weights/best.pt",
+      "gpu_ms": 9.3,
+      "params_m": 2.6,
+      "size_mb": 5.4
+    },
+    {
+      "name": "exp1_yolov11s",
+      "model": "yolo11s.pt",
+      "map50": 0.8194,
+      "map5095": 0.5476,
+      "recall": 0.8649,
+      "precision": 0.871,
+      "time_min": 29.0,
+      "best_pt": "/kaggle/working/ablation/exp1_yolov11s/weights/best.pt",
+      "gpu_ms": 10.8,
+      "params_m": 9.5,
+      "size_mb": 18.4
+    }
+  ]
+}

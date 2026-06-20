@@ -1,0 +1,43 @@
+{
+  "exp3": [
+    {
+      "name": "exp3_scratch",
+      "model": "yolo11n.yaml",
+      "map50": 0.8078,
+      "map5095": 0.5161,
+      "recall": 0.8105,
+      "precision": 0.8528,
+      "time_min": 22.5,
+      "best_pt": "/kaggle/working/ablation/exp3_scratch/weights/best.pt",
+      "gpu_ms": 8.4,
+      "params_m": 2.6,
+      "size_mb": 0.0
+    },
+    {
+      "name": "exp3_finetune",
+      "model": "yolo11n.pt",
+      "map50": 0.8255,
+      "map5095": 0.5477,
+      "recall": 0.8473,
+      "precision": 0.8719,
+      "time_min": 27.8,
+      "best_pt": "/kaggle/working/ablation/exp3_finetune/weights/best.pt",
+      "gpu_ms": 8.4,
+      "params_m": 2.6,
+      "size_mb": 5.4
+    },
+    {
+      "name": "exp3_freeze_bb",
+      "model": "yolo11n.pt",
+      "map50": 0.8218,
+      "map5095": 0.5337,
+      "recall": 0.8409,
+      "precision": 0.8518,
+      "time_min": 20.1,
+      "best_pt": "/kaggle/working/ablation/exp3_freeze_bb/weights/best.pt",
+      "gpu_ms": 9.1,
+      "params_m": 2.6,
+      "size_mb": 5.4
+    }
+  ]
+}

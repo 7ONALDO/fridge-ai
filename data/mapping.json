@@ -1,0 +1,212 @@
+{
+  "apple": [
+    "apple",
+    "apples",
+    "granny smith apple",
+    "granny smith apples",
+    "thinly sliced apples"
+  ],
+  "banana": [
+    "banana",
+    "bananas",
+    "ripe banana",
+    "ripe bananas",
+    "mashed bananas"
+  ],
+  "beef": [
+    "beef",
+    "beef sirloin",
+    "beef top sirloin",
+    "chuck roast",
+    "round steak"
+  ],
+  "blueberries": [
+    "blueberry",
+    "blueberries",
+    "fresh blueberries",
+    "frozen blueberries",
+    "pint fresh blueberries"
+  ],
+  "bread": [
+    "bread",
+    "bread crumbs",
+    "panko bread crumbs",
+    "panko crumbs",
+    "french baguette"
+  ],
+  "butter": [
+    "butter",
+    "unsalted butter",
+    "melted butter",
+    "softened butter",
+    "cold butter"
+  ],
+  "carrot": [
+    "carrot",
+    "carrots",
+    "sliced carrots",
+    "diced carrot",
+    "shredded carrots"
+  ],
+  "cheese": [
+    "cheese",
+    "cheddar cheese",
+    "parmesan cheese",
+    "mozzarella cheese",
+    "cream cheese"
+  ],
+  "chicken": [
+    "whole chicken",
+    "chicken thighs",
+    "chicken wings",
+    "chicken tenders",
+    "diced cooked chicken"
+  ],
+  "chicken_breast": [
+    "chicken breast",
+    "chicken breasts",
+    "boneless chicken breast",
+    "skinless boneless chicken breast halves",
+    "chicken breast halves"
+  ],
+  "chocolate": [
+    "chocolate",
+    "chocolate chips",
+    "semisweet chocolate chips",
+    "cocoa powder",
+    "unsweetened cocoa"
+  ],
+  "corn": [
+    "sweet corn",
+    "whole kernel corn",
+    "corn kernels",
+    "frozen corn",
+    "corn on the cob"
+  ],
+  "eggs": [
+    "egg",
+    "eggs",
+    "large eggs",
+    "beaten egg",
+    "beaten eggs"
+  ],
+  "flour": [
+    "flour",
+    "all-purpose flour",
+    "unbleached all-purpose flour",
+    "all purpose flour",
+    "plain flour"
+  ],
+  "goat_cheese": [
+    "goat cheese",
+    "goat chevre",
+    "chevre",
+    "herbed goat cheese",
+    "crumbled goat cheese"
+  ],
+  "green_beans": [
+    "green bean",
+    "green beans",
+    "fresh green beans",
+    "string beans",
+    "haricot vert"
+  ],
+  "ground_beef": [
+    "ground beef",
+    "lean ground beef",
+    "extra-lean ground beef",
+    "hamburger meat",
+    "minced beef"
+  ],
+  "ham": [
+    "ham",
+    "deli ham",
+    "cooked ham",
+    "bone-in ham",
+    "prosciutto"
+  ],
+  "heavy_cream": [
+    "heavy cream",
+    "heavy whipping cream",
+    "whipping cream",
+    "double cream",
+    "chilled heavy cream"
+  ],
+  "lime": [
+    "lime",
+    "limes",
+    "lime juice",
+    "fresh lime juice",
+    "lime wedge"
+  ],
+  "milk": [
+    "milk",
+    "whole milk",
+    "skim milk",
+    "2% milk",
+    "low-fat milk"
+  ],
+  "mushrooms": [
+    "mushroom",
+    "mushrooms",
+    "fresh mushrooms",
+    "sliced mushrooms",
+    "portobello mushrooms"
+  ],
+  "onion": [
+    "onion",
+    "onions",
+    "chopped onion",
+    "diced onion",
+    "yellow onion"
+  ],
+  "potato": [
+    "potato",
+    "potatoes",
+    "russet potatoes",
+    "gold potatoes",
+    "peeled potatoes"
+  ],
+  "shrimp": [
+    "shrimp",
+    "shrimp peeled and deveined",
+    "medium shrimp",
+    "bay shrimp",
+    "cooked shrimp"
+  ],
+  "spinach": [
+    "spinach",
+    "baby spinach",
+    "fresh spinach",
+    "baby spinach leaves",
+    "chopped spinach"
+  ],
+  "strawberries": [
+    "strawberry",
+    "strawberries",
+    "fresh strawberries",
+    "sliced strawberries",
+    "frozen strawberries"
+  ],
+  "sugar": [
+    "sugar",
+    "white sugar",
+    "granulated sugar",
+    "brown sugar",
+    "packed brown sugar"
+  ],
+  "sweet_potato": [
+    "sweet potato",
+    "sweet potatoes",
+    "orange-fleshed sweet potato",
+    "yams",
+    "yam"
+  ],
+  "tomato": [
+    "tomato",
+    "tomatoes",
+    "crushed tomatoes",
+    "diced tomatoes",
+    "grape tomatoes"
+  ]
+}

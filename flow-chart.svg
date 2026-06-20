@@ -1,0 +1,398 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 2500" font-family="'Pretendard', 'Malgun Gothic', sans-serif">
+  <defs>
+    <linearGradient id="userGradFC" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFF8E1;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#FFE082;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="uiGradFC" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#E3F2FD;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#90CAF9;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="apiGradFC" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#E8F5E9;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#A5D6A7;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="aiGradFC" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#F3E5F5;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#CE93D8;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="storageGradFC" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFF3E0;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#FFCC80;stop-opacity:1"/>
+    </linearGradient>
+    <marker id="arrowSolid" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#37474F"/>
+    </marker>
+    <marker id="arrowDotted" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#90A4AE"/>
+    </marker>
+    <filter id="boxShadowFC" x="-5%" y="-5%" width="110%" height="110%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+      <feOffset dx="1" dy="2"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.15"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  
+  <rect width="1400" height="2500" fill="#FAFAFA"/>
+  
+  <!-- Title -->
+  <text x="700" y="45" text-anchor="middle" font-size="28" font-weight="700" fill="#1A237E">Flow Chart — 데이터 처리 흐름도</text>
+  <text x="700" y="75" text-anchor="middle" font-size="15" fill="#546E7A">모든 화살표 옆에 데이터 형식이 명시되어 있습니다</text>
+  
+  <!-- ============================================= -->
+  <!-- STEP 배지 (왼쪽 번호) -->
+  <!-- ============================================= -->
+  
+  <rect x="20" y="140" width="50" height="170" rx="8" fill="#FFE082" opacity="0.6"/>
+  <text x="45" y="200" text-anchor="middle" font-size="24" font-weight="700" fill="#E65100">①</text>
+  <text x="45" y="235" text-anchor="middle" font-size="10" fill="#E65100">사용자</text>
+  <text x="45" y="248" text-anchor="middle" font-size="10" fill="#E65100">입력</text>
+  
+  <rect x="20" y="340" width="50" height="280" rx="8" fill="#90CAF9" opacity="0.6"/>
+  <text x="45" y="430" text-anchor="middle" font-size="24" font-weight="700" fill="#0D47A1">②</text>
+  <text x="45" y="465" text-anchor="middle" font-size="10" fill="#0D47A1">UI →</text>
+  <text x="45" y="478" text-anchor="middle" font-size="10" fill="#0D47A1">API</text>
+  
+  <rect x="20" y="730" width="50" height="340" rx="8" fill="#A5D6A7" opacity="0.6"/>
+  <text x="45" y="860" text-anchor="middle" font-size="24" font-weight="700" fill="#1B5E20">③</text>
+  <text x="45" y="895" text-anchor="middle" font-size="10" fill="#1B5E20">API →</text>
+  <text x="45" y="908" text-anchor="middle" font-size="10" fill="#1B5E20">AI Core</text>
+  
+  <rect x="20" y="1180" width="50" height="580" rx="8" fill="#CE93D8" opacity="0.6"/>
+  <text x="45" y="1400" text-anchor="middle" font-size="24" font-weight="700" fill="#4A148C">④</text>
+  <text x="45" y="1435" text-anchor="middle" font-size="10" fill="#4A148C">AI 내부</text>
+  <text x="45" y="1448" text-anchor="middle" font-size="10" fill="#4A148C">파이프라인</text>
+  
+  <rect x="20" y="1880" width="50" height="320" rx="8" fill="#FFCC80" opacity="0.6"/>
+  <text x="45" y="2000" text-anchor="middle" font-size="24" font-weight="700" fill="#E65100">⑤</text>
+  <text x="45" y="2035" text-anchor="middle" font-size="10" fill="#E65100">저장소</text>
+  <text x="45" y="2048" text-anchor="middle" font-size="10" fill="#E65100">접근</text>
+  
+  <!-- ============================================= -->
+  <!-- 노드 그리기 -->
+  <!-- ============================================= -->
+  
+  <!-- ① 사용자 -->
+  <g filter="url(#boxShadowFC)">
+    <ellipse cx="700" cy="200" rx="90" ry="35" fill="url(#userGradFC)" stroke="#F57F17" stroke-width="2"/>
+  </g>
+  <text x="700" y="207" text-anchor="middle" font-size="20" font-weight="700" fill="#E65100">👤 사용자</text>
+  
+  <!-- ② Streamlit UI -->
+  <g filter="url(#boxShadowFC)">
+    <rect x="540" y="400" width="320" height="70" rx="10" fill="url(#uiGradFC)" stroke="#1976D2" stroke-width="2"/>
+  </g>
+  <text x="700" y="428" text-anchor="middle" font-size="17" font-weight="700" fill="#0D47A1">🖥️ Streamlit UI</text>
+  <text x="700" y="450" text-anchor="middle" font-size="12" fill="#1976D2">이미지 업로드 · 필터 선택 · 결과 표시</text>
+  
+  <!-- ③ FastAPI 4개 엔드포인트 -->
+  <g filter="url(#boxShadowFC)">
+    <rect x="100" y="810" width="250" height="75" rx="10" fill="url(#apiGradFC)" stroke="#388E3C" stroke-width="1.5"/>
+  </g>
+  <text x="225" y="838" text-anchor="middle" font-size="15" font-weight="700" fill="#1B5E20">/predict</text>
+  <text x="225" y="860" text-anchor="middle" font-size="11" fill="#388E3C">이미지 추론</text>
+  <text x="225" y="876" text-anchor="middle" font-size="10" fill="#757575">POST</text>
+  
+  <g filter="url(#boxShadowFC)">
+    <rect x="410" y="810" width="250" height="75" rx="10" fill="url(#apiGradFC)" stroke="#388E3C" stroke-width="1.5"/>
+  </g>
+  <text x="535" y="838" text-anchor="middle" font-size="15" font-weight="700" fill="#1B5E20">/recipes</text>
+  <text x="535" y="860" text-anchor="middle" font-size="11" fill="#388E3C">레시피 랭킹</text>
+  <text x="535" y="876" text-anchor="middle" font-size="10" fill="#757575">GET</text>
+  
+  <g filter="url(#boxShadowFC)">
+    <rect x="720" y="810" width="250" height="75" rx="10" fill="url(#apiGradFC)" stroke="#388E3C" stroke-width="1.5"/>
+  </g>
+  <text x="845" y="838" text-anchor="middle" font-size="15" font-weight="700" fill="#1B5E20">/recipe/id</text>
+  <text x="845" y="860" text-anchor="middle" font-size="11" fill="#388E3C">상세 조회</text>
+  <text x="845" y="876" text-anchor="middle" font-size="10" fill="#757575">GET</text>
+  
+  <g filter="url(#boxShadowFC)">
+    <rect x="1030" y="810" width="250" height="75" rx="10" fill="url(#apiGradFC)" stroke="#388E3C" stroke-width="1.5"/>
+  </g>
+  <text x="1155" y="838" text-anchor="middle" font-size="15" font-weight="700" fill="#1B5E20">/scale</text>
+  <text x="1155" y="860" text-anchor="middle" font-size="11" fill="#388E3C">인분 조정</text>
+  <text x="1155" y="876" text-anchor="middle" font-size="10" fill="#757575">POST</text>
+  
+  <!-- ④ AI Core 5개 모듈 -->
+  <!-- Row 1: YOLOv11 → Normalizer → Ranker -->
+  <g filter="url(#boxShadowFC)">
+    <rect x="100" y="1230" width="240" height="90" rx="10" fill="url(#aiGradFC)" stroke="#7B1FA2" stroke-width="1.5"/>
+  </g>
+  <text x="220" y="1258" text-anchor="middle" font-size="16" font-weight="700" fill="#4A148C">🎯 YOLOv11</text>
+  <text x="220" y="1282" text-anchor="middle" font-size="12" fill="#6A1B9A">객체 탐지</text>
+  <text x="220" y="1302" text-anchor="middle" font-size="11" fill="#757575">30 classes</text>
+  
+  <g filter="url(#boxShadowFC)">
+    <rect x="490" y="1230" width="240" height="90" rx="10" fill="url(#aiGradFC)" stroke="#7B1FA2" stroke-width="1.5"/>
+  </g>
+  <text x="610" y="1258" text-anchor="middle" font-size="16" font-weight="700" fill="#4A148C">🔄 재료 정규화</text>
+  <text x="610" y="1282" text-anchor="middle" font-size="12" fill="#6A1B9A">Normalizer</text>
+  <text x="610" y="1302" text-anchor="middle" font-size="11" fill="#757575">동의어 매핑</text>
+  
+  <g filter="url(#boxShadowFC)">
+    <rect x="880" y="1230" width="240" height="90" rx="10" fill="url(#aiGradFC)" stroke="#7B1FA2" stroke-width="1.5"/>
+  </g>
+  <text x="1000" y="1258" text-anchor="middle" font-size="16" font-weight="700" fill="#4A148C">🏆 레시피 랭킹</text>
+  <text x="1000" y="1282" text-anchor="middle" font-size="12" fill="#6A1B9A">Ranker</text>
+  <text x="1000" y="1302" text-anchor="middle" font-size="11" fill="#757575">Coverage + Shortage</text>
+  
+  <!-- Row 2: Pantry 분류 / Scaler -->
+  <g filter="url(#boxShadowFC)">
+    <rect x="330" y="1590" width="260" height="90" rx="10" fill="url(#aiGradFC)" stroke="#7B1FA2" stroke-width="1.5"/>
+  </g>
+  <text x="460" y="1618" text-anchor="middle" font-size="15" font-weight="700" fill="#4A148C">📦 재료 3구간 분류</text>
+  <text x="460" y="1640" text-anchor="middle" font-size="11" fill="#6A1B9A">Pantry Classifier</text>
+  <text x="460" y="1660" text-anchor="middle" font-size="10" fill="#757575">보유 / 구매 / pantry</text>
+  
+  <g filter="url(#boxShadowFC)">
+    <rect x="800" y="1590" width="260" height="90" rx="10" fill="url(#aiGradFC)" stroke="#7B1FA2" stroke-width="1.5"/>
+  </g>
+  <text x="930" y="1618" text-anchor="middle" font-size="15" font-weight="700" fill="#4A148C">⚖️ 인분 스케일러</text>
+  <text x="930" y="1640" text-anchor="middle" font-size="11" fill="#6A1B9A">Scaler</text>
+  <text x="930" y="1660" text-anchor="middle" font-size="10" fill="#757575">수량 비례 조정</text>
+  
+  <!-- ⑤ Storage 4개 -->
+  <g filter="url(#boxShadowFC)">
+    <ellipse cx="220" cy="2000" rx="100" ry="12" fill="#FFF" stroke="#F57C00" stroke-width="1.5"/>
+    <path d="M 120,2000 L 120,2070 Q 120,2082 220,2082 Q 320,2082 320,2070 L 320,2000" fill="#FFF" stroke="#F57C00" stroke-width="1.5"/>
+    <path d="M 120,2000 Q 120,2012 220,2012 Q 320,2012 320,2000" fill="none" stroke="#F57C00" stroke-width="1.5"/>
+  </g>
+  <text x="220" y="2040" text-anchor="middle" font-size="14" font-weight="700" fill="#E65100">🎨 YOLO 가중치</text>
+  <text x="220" y="2060" text-anchor="middle" font-size="10" fill="#757575">best.pt</text>
+  
+  <g filter="url(#boxShadowFC)">
+    <ellipse cx="510" cy="2000" rx="100" ry="12" fill="#FFF" stroke="#F57C00" stroke-width="1.5"/>
+    <path d="M 410,2000 L 410,2070 Q 410,2082 510,2082 Q 610,2082 610,2070 L 610,2000" fill="#FFF" stroke="#F57C00" stroke-width="1.5"/>
+    <path d="M 410,2000 Q 410,2012 510,2012 Q 610,2012 610,2000" fill="none" stroke="#F57C00" stroke-width="1.5"/>
+  </g>
+  <text x="510" y="2040" text-anchor="middle" font-size="14" font-weight="700" fill="#E65100">📊 Recipes CSV</text>
+  <text x="510" y="2060" text-anchor="middle" font-size="10" fill="#757575">1,090건</text>
+  
+  <g filter="url(#boxShadowFC)">
+    <ellipse cx="800" cy="2000" rx="100" ry="12" fill="#FFF" stroke="#F57C00" stroke-width="1.5"/>
+    <path d="M 700,2000 L 700,2070 Q 700,2082 800,2082 Q 900,2082 900,2070 L 900,2000" fill="#FFF" stroke="#F57C00" stroke-width="1.5"/>
+    <path d="M 700,2000 Q 700,2012 800,2012 Q 900,2012 900,2000" fill="none" stroke="#F57C00" stroke-width="1.5"/>
+  </g>
+  <text x="800" y="2040" text-anchor="middle" font-size="14" font-weight="700" fill="#E65100">🔗 동의어 매핑</text>
+  <text x="800" y="2060" text-anchor="middle" font-size="10" fill="#757575">mapping.json</text>
+  
+  <g filter="url(#boxShadowFC)">
+    <ellipse cx="1090" cy="2000" rx="100" ry="12" fill="#FFF" stroke="#F57C00" stroke-width="1.5"/>
+    <path d="M 990,2000 L 990,2070 Q 990,2082 1090,2082 Q 1190,2082 1190,2070 L 1190,2000" fill="#FFF" stroke="#F57C00" stroke-width="1.5"/>
+    <path d="M 990,2000 Q 990,2012 1090,2012 Q 1190,2012 1190,2000" fill="none" stroke="#F57C00" stroke-width="1.5"/>
+  </g>
+  <text x="1090" y="2040" text-anchor="middle" font-size="14" font-weight="700" fill="#E65100">🧂 Pantry 설정</text>
+  <text x="1090" y="2060" text-anchor="middle" font-size="10" fill="#757575">pantry.json</text>
+  
+  <!-- ============================================= -->
+  <!-- ① 사용자 → UI -->
+  <!-- ============================================= -->
+  
+  <!-- 화살표 1개: 사용자 → UI -->
+  <line x1="700" y1="238" x2="700" y2="396" stroke="#37474F" stroke-width="2.5" marker-end="url(#arrowSolid)"/>
+  
+  <!-- 라벨: 화살표 바로 옆 (x=720~ 에서 오른쪽) -->
+  <!-- 엣지 1: 이미지 파일 -->
+  <rect x="725" y="260" width="295" height="40" rx="6" fill="#FFF" stroke="#37474F" stroke-width="1.2"/>
+  <text x="872" y="278" text-anchor="middle" font-size="12" font-weight="700" fill="#37474F">① 이미지 파일 N장</text>
+  <text x="872" y="293" text-anchor="middle" font-size="10" fill="#546E7A" font-style="italic">[img1.jpg, img2.jpg, img3.jpg]</text>
+  
+  <!-- 엣지 2: 필터 선택 이벤트 -->
+  <rect x="725" y="310" width="295" height="40" rx="6" fill="#FFF" stroke="#37474F" stroke-width="1.2"/>
+  <text x="872" y="328" text-anchor="middle" font-size="12" font-weight="700" fill="#37474F">② 필터 선택 이벤트</text>
+  <text x="872" y="343" text-anchor="middle" font-size="10" fill="#546E7A" font-style="italic">{meal, cuisine, diet}</text>
+  
+  <!-- ============================================= -->
+  <!-- ② UI → FastAPI 4개 (분기 화살표) -->
+  <!-- ============================================= -->
+  
+  <!-- 화살표 4개: UI → 각 엔드포인트 -->
+  <path d="M 600 470 Q 420 590 225 806" fill="none" stroke="#37474F" stroke-width="2" marker-end="url(#arrowSolid)"/>
+  <path d="M 650 470 Q 580 620 535 806" fill="none" stroke="#37474F" stroke-width="2" marker-end="url(#arrowSolid)"/>
+  <path d="M 750 470 Q 810 620 845 806" fill="none" stroke="#37474F" stroke-width="2" marker-end="url(#arrowSolid)"/>
+  <path d="M 800 470 Q 960 600 1155 806" fill="none" stroke="#37474F" stroke-width="2" marker-end="url(#arrowSolid)"/>
+  
+  <!-- 라벨: 각 화살표의 중점 근처 (y=620 대역) -->
+  
+  <!-- ③ UI → /predict (화살표 중점 x≈380, y≈620) -->
+  <rect x="85" y="540" width="250" height="45" rx="6" fill="#FFF" stroke="#37474F" stroke-width="1.2"/>
+  <text x="210" y="558" text-anchor="middle" font-size="12" font-weight="700" fill="#1B5E20">③ → /predict</text>
+  <text x="210" y="573" text-anchor="middle" font-size="10" fill="#37474F">multipart/form-data</text>
+  <text x="210" y="583" text-anchor="middle" font-size="9" fill="#546E7A" font-style="italic">files: List[bytes]</text>
+  
+  <!-- 응답 박스 (/predict → UI) -->
+  <rect x="85" y="610" width="250" height="50" rx="6" fill="#F5F5F5" stroke="#CFD8DC" stroke-width="1"/>
+  <text x="210" y="628" text-anchor="middle" font-size="11" font-weight="600" fill="#37474F">⑥ 응답 ← /predict</text>
+  <text x="210" y="643" text-anchor="middle" font-size="10" fill="#37474F">표준 재료 집합</text>
+  <text x="210" y="655" text-anchor="middle" font-size="9" fill="#546E7A" font-style="italic">{"onion":2, "carrot":3}</text>
+  
+  <!-- ⑦ UI → /recipes (화살표 중점 x≈560, y≈620) -->
+  <rect x="355" y="540" width="250" height="45" rx="6" fill="#FFF" stroke="#37474F" stroke-width="1.2"/>
+  <text x="480" y="558" text-anchor="middle" font-size="12" font-weight="700" fill="#1B5E20">⑦ → /recipes</text>
+  <text x="480" y="573" text-anchor="middle" font-size="10" fill="#37474F">재료 집합 + 필터 JSON</text>
+  <text x="480" y="583" text-anchor="middle" font-size="9" fill="#546E7A" font-style="italic">{ingredients, filters}</text>
+  
+  <!-- 응답 박스 (/recipes → UI) -->
+  <rect x="355" y="610" width="250" height="50" rx="6" fill="#F5F5F5" stroke="#CFD8DC" stroke-width="1"/>
+  <text x="480" y="628" text-anchor="middle" font-size="11" font-weight="600" fill="#37474F">⑨ 응답 ← /recipes</text>
+  <text x="480" y="643" text-anchor="middle" font-size="10" fill="#37474F">Top-K 레시피</text>
+  <text x="480" y="655" text-anchor="middle" font-size="9" fill="#546E7A" font-style="italic">[{id, name, score, ...}]</text>
+  
+  <!-- ⑩ UI → /recipe/{id} (화살표 중점 x≈780, y≈620) -->
+  <rect x="625" y="540" width="250" height="45" rx="6" fill="#FFF" stroke="#37474F" stroke-width="1.2"/>
+  <text x="750" y="558" text-anchor="middle" font-size="12" font-weight="700" fill="#1B5E20">⑩ → /recipe/{id}</text>
+  <text x="750" y="573" text-anchor="middle" font-size="10" fill="#37474F">URL 파라미터</text>
+  <text x="750" y="583" text-anchor="middle" font-size="9" fill="#546E7A" font-style="italic">GET /recipe/427</text>
+  
+  <!-- 응답 박스 (/recipe/{id} → UI) -->
+  <rect x="625" y="610" width="250" height="50" rx="6" fill="#F5F5F5" stroke="#CFD8DC" stroke-width="1"/>
+  <text x="750" y="628" text-anchor="middle" font-size="11" font-weight="600" fill="#37474F">⑫ 응답 ← /recipe/{id}</text>
+  <text x="750" y="643" text-anchor="middle" font-size="10" fill="#37474F">3구간 분류</text>
+  <text x="750" y="655" text-anchor="middle" font-size="9" fill="#546E7A" font-style="italic">{owned, buy, pantry}</text>
+  
+  <!-- ⑬ UI → /scale (화살표 중점 x≈980, y≈620) -->
+  <rect x="895" y="540" width="255" height="45" rx="6" fill="#FFF" stroke="#37474F" stroke-width="1.2"/>
+  <text x="1022" y="558" text-anchor="middle" font-size="12" font-weight="700" fill="#1B5E20">⑬ → /scale</text>
+  <text x="1022" y="573" text-anchor="middle" font-size="10" fill="#37474F">recipe_id + 새 인분 수</text>
+  <text x="1022" y="583" text-anchor="middle" font-size="9" fill="#546E7A" font-style="italic">{recipe_id:427, new_servings:4}</text>
+  
+  <!-- 응답 박스 (/scale → UI) -->
+  <rect x="895" y="610" width="255" height="50" rx="6" fill="#F5F5F5" stroke="#CFD8DC" stroke-width="1"/>
+  <text x="1022" y="628" text-anchor="middle" font-size="11" font-weight="600" fill="#37474F">⑮ 응답 ← /scale</text>
+  <text x="1022" y="643" text-anchor="middle" font-size="10" fill="#37474F">스케일된 재료</text>
+  <text x="1022" y="655" text-anchor="middle" font-size="9" fill="#546E7A" font-style="italic">[{name, quantity, unit}]</text>
+  
+  <!-- ============================================= -->
+  <!-- ③ FastAPI → AI Core (4개 화살표, 각각 수직에 가까움) -->
+  <!-- ============================================= -->
+  
+  <!-- 화살표 4-1: /predict → YOLOv11 (수직, 라벨은 화살표 왼쪽) -->
+  <line x1="225" y1="888" x2="220" y2="1226" stroke="#37474F" stroke-width="2" marker-end="url(#arrowSolid)"/>
+  <rect x="90" y="1020" width="210" height="50" rx="6" fill="#FFF" stroke="#37474F" stroke-width="1.2"/>
+  <text x="195" y="1038" text-anchor="middle" font-size="11" font-weight="700" fill="#37474F">④ numpy array</text>
+  <text x="195" y="1053" text-anchor="middle" font-size="10" fill="#546E7A" font-style="italic">shape=(640, 640, 3)</text>
+  <text x="195" y="1065" text-anchor="middle" font-size="10" fill="#546E7A" font-style="italic">dtype=uint8</text>
+  
+  <!-- 화살표 4-2: /recipes → Ranker (대각선 우하향, 라벨은 화살표 왼쪽에 밀착) -->
+  <path d="M 535 888 Q 750 1050 970 1226" fill="none" stroke="#37474F" stroke-width="2" marker-end="url(#arrowSolid)"/>
+  <rect x="470" y="1010" width="220" height="50" rx="6" fill="#FFF" stroke="#37474F" stroke-width="1.2"/>
+  <text x="580" y="1028" text-anchor="middle" font-size="11" font-weight="700" fill="#37474F">⑧ Query 객체</text>
+  <text x="580" y="1043" text-anchor="middle" font-size="10" fill="#546E7A" font-style="italic">Query(ingredients, filters)</text>
+  <text x="580" y="1055" text-anchor="middle" font-size="10" fill="#546E7A" font-style="italic">→ Ranker 호출</text>
+  
+  <!-- 화살표 4-3: /recipe/id → Pantry Classifier (대각선 좌하향, 라벨은 화살표 초반부 오른쪽에 밀착) -->
+  <path d="M 845 888 Q 820 1250 475 1586" fill="none" stroke="#37474F" stroke-width="2" marker-end="url(#arrowSolid)"/>
+  <rect x="840" y="1000" width="225" height="50" rx="6" fill="#FFF" stroke="#37474F" stroke-width="1.2"/>
+  <text x="952" y="1018" text-anchor="middle" font-size="11" font-weight="700" fill="#37474F">⑪ Recipe 객체</text>
+  <text x="952" y="1033" text-anchor="middle" font-size="10" fill="#546E7A" font-style="italic">Recipe(id, ingredients, ...)</text>
+  <text x="952" y="1045" text-anchor="middle" font-size="10" fill="#546E7A" font-style="italic">→ Pantry Classifier 호출</text>
+  
+  <!-- 화살표 4-4: /scale → Scaler (대각선, 라벨은 화살표 위에 겹치게 배치) -->
+  <path d="M 1155 888 Q 1180 1230 930 1586" fill="none" stroke="#37474F" stroke-width="2" marker-end="url(#arrowSolid)"/>
+  <rect x="1015" y="1155" width="225" height="50" rx="6" fill="#FFF" stroke="#37474F" stroke-width="1.2"/>
+  <text x="1127" y="1173" text-anchor="middle" font-size="11" font-weight="700" fill="#37474F">⑭ 레시피 + 배율</text>
+  <text x="1127" y="1188" text-anchor="middle" font-size="10" fill="#546E7A" font-style="italic">recipe + ratio</text>
+  <text x="1127" y="1200" text-anchor="middle" font-size="10" fill="#546E7A" font-style="italic">ratio = new / original</text>
+  
+  <!-- ============================================= -->
+  <!-- ④ AI Core 내부 파이프라인 -->
+  <!-- ============================================= -->
+  
+  <!-- 화살표 5: YOLOv11 → Normalizer (수평, 중점 x≈415, y≈1275) -->
+  <line x1="343" y1="1275" x2="487" y2="1275" stroke="#37474F" stroke-width="2" marker-end="url(#arrowSolid)"/>
+  <rect x="343" y="1330" width="145" height="55" rx="6" fill="#FFF" stroke="#37474F" stroke-width="1.2"/>
+  <text x="415" y="1348" text-anchor="middle" font-size="10" font-weight="700" fill="#37474F">⑤ Detection 리스트</text>
+  <text x="415" y="1363" text-anchor="middle" font-size="9" fill="#546E7A" font-style="italic">[{class, conf, bbox},</text>
+  <text x="415" y="1375" text-anchor="middle" font-size="9" fill="#546E7A" font-style="italic">...]</text>
+  <!-- 화살표→라벨 연결선 (점선) -->
+  <line x1="415" y1="1275" x2="415" y2="1330" stroke="#CFD8DC" stroke-width="1" stroke-dasharray="2,2"/>
+  
+  <!-- 화살표 6: Normalizer → Ranker (수평, 중점 x≈805, y≈1275) -->
+  <line x1="733" y1="1275" x2="877" y2="1275" stroke="#37474F" stroke-width="2" marker-end="url(#arrowSolid)"/>
+  <rect x="733" y="1330" width="145" height="55" rx="6" fill="#FFF" stroke="#37474F" stroke-width="1.2"/>
+  <text x="805" y="1348" text-anchor="middle" font-size="10" font-weight="700" fill="#37474F">⑥ 표준 재료 집합</text>
+  <text x="805" y="1363" text-anchor="middle" font-size="9" fill="#546E7A" font-style="italic">Set[str]</text>
+  <text x="805" y="1375" text-anchor="middle" font-size="9" fill="#546E7A" font-style="italic">{"onion", "carrot"}</text>
+  <line x1="805" y1="1275" x2="805" y2="1330" stroke="#CFD8DC" stroke-width="1" stroke-dasharray="2,2"/>
+  
+  <!-- Ranker → Pantry Classifier 화살표는 원본 문서 Request Flow 표에 없는 엣지이므로 제거됨 -->
+  <!-- (Ranker 결과는 /recipes 응답으로 UI에 반환되고, 사용자가 특정 레시피 선택 후 -->
+  <!--  /recipe/{id} 호출 시 Pantry Classifier가 독립적으로 실행됨) -->
+  
+  
+  <!-- Pantry → Scaler 화살표는 원본 문서 Request Flow 표에 없는 엣지이므로 제거됨 -->
+  <!-- (Pantry Classifier와 Scaler는 각각 독립된 FastAPI 엔드포인트에서 호출됨) -->
+  
+  
+  <!-- ============================================= -->
+  <!-- ⑤ AI Core → Storage (점선 5개, 라벨은 화살표 중점에 배치) -->
+  <!-- ============================================= -->
+  
+  <!-- S1: YOLOv11 → YOLO 가중치 (화살표 중점 y≈1650) -->
+  <path d="M 180 1323 Q 150 1600 220 1988" fill="none" stroke="#90A4AE" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#arrowDotted)"/>
+  <rect x="45" y="1830" width="230" height="50" rx="6" fill="#FFF" stroke="#90A4AE" stroke-width="1.2"/>
+  <text x="160" y="1847" text-anchor="middle" font-size="11" font-weight="700" fill="#546E7A">S1. model.load()</text>
+  <text x="160" y="1862" text-anchor="middle" font-size="10" fill="#78909C" font-style="italic">서버 시작 시 1회</text>
+  <text x="160" y="1874" text-anchor="middle" font-size="10" fill="#78909C" font-style="italic">best.pt (30 classes)</text>
+  
+  <!-- S2: Normalizer → mapping.json -->
+  <!-- Normalizer 중심(610, 1323) → mapping.json(800, 2000), 라벨은 곡선 후반부(오른쪽 아래) 옆 -->
+  <path d="M 610 1323 Q 650 1600 800 1988" fill="none" stroke="#90A4AE" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#arrowDotted)"/>
+  <rect x="620" y="1895" width="225" height="50" rx="6" fill="#FFF" stroke="#90A4AE" stroke-width="1.2"/>
+  <text x="732" y="1912" text-anchor="middle" font-size="11" font-weight="700" fill="#546E7A">S2. 동의어 dict 조회</text>
+  <text x="732" y="1927" text-anchor="middle" font-size="10" fill="#78909C" font-style="italic">요청마다</text>
+  <text x="732" y="1939" text-anchor="middle" font-size="10" fill="#78909C" font-style="italic">{"chicken_breast": [...]}</text>
+  
+  <!-- S3: Ranker → Recipes CSV -->
+  <!-- Ranker(1000, 1323) → Recipes CSV(510, 2000), 중점 x≈755 y≈1660 -->
+  <path d="M 1000 1323 Q 900 1650 510 1988" fill="none" stroke="#90A4AE" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#arrowDotted)"/>
+  <rect x="800" y="1500" width="210" height="50" rx="6" fill="#FFF" stroke="#90A4AE" stroke-width="1.2"/>
+  <text x="905" y="1517" text-anchor="middle" font-size="11" font-weight="700" fill="#546E7A">S3. DataFrame 조회</text>
+  <text x="905" y="1532" text-anchor="middle" font-size="10" fill="#78909C" font-style="italic">시작 시 메모리 로드</text>
+  <text x="905" y="1544" text-anchor="middle" font-size="10" fill="#78909C" font-style="italic">1,090행 × 15열</text>
+  
+  <!-- S4: Pantry → pantry.json -->
+  <!-- Pantry 우측(590, 1635) → pantry.json(1090, 1988), 우측으로 크게 우회 -->
+  <!-- 곡선 중점 대략 x≈1200, y≈1810 (우측 빈 공간) -->
+  <path d="M 590 1635 Q 1280 1700 1090 1988" fill="none" stroke="#90A4AE" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#arrowDotted)"/>
+  <rect x="1070" y="1835" width="220" height="50" rx="6" fill="#FFF" stroke="#90A4AE" stroke-width="1.2"/>
+  <text x="1180" y="1852" text-anchor="middle" font-size="11" font-weight="700" fill="#546E7A">S4. staple 목록</text>
+  <text x="1180" y="1867" text-anchor="middle" font-size="10" fill="#78909C" font-style="italic">요청마다</text>
+  <text x="1180" y="1879" text-anchor="middle" font-size="10" fill="#78909C" font-style="italic">["water", "salt", ...]</text>
+  
+  <!-- S5: Scaler → Recipes CSV -->
+  <!-- Scaler → Recipes CSV, 라벨은 S5 화살표 오른쪽에 밀착 (S4 곡선과 분류된 재료 박스 모두 회피) -->
+  <path d="M 900 1683 Q 700 1820 530 1988" fill="none" stroke="#90A4AE" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#arrowDotted)"/>
+  <rect x="770" y="1770" width="225" height="50" rx="6" fill="#FFF" stroke="#90A4AE" stroke-width="1.2"/>
+  <text x="882" y="1787" text-anchor="middle" font-size="11" font-weight="700" fill="#546E7A">S5. ingredients 필드 조회</text>
+  <text x="882" y="1802" text-anchor="middle" font-size="10" fill="#78909C" font-style="italic">요청마다</text>
+  <text x="882" y="1814" text-anchor="middle" font-size="10" fill="#78909C" font-style="italic">해당 recipe의 재료·수량·단위</text>
+  
+  <!-- ============================================= -->
+  <!-- Legend -->
+  <!-- ============================================= -->
+  <g>
+    <rect x="90" y="2280" width="1220" height="190" rx="10" fill="#FFF" stroke="#CFD8DC" stroke-width="1.5"/>
+    <text x="110" y="2305" font-size="16" font-weight="700" fill="#263238">📖 범례</text>
+    
+    <line x1="110" y1="2330" x2="160" y2="2330" stroke="#37474F" stroke-width="2" marker-end="url(#arrowSolid)"/>
+    <text x="175" y="2335" font-size="13" fill="#37474F" font-weight="600">실선: 요청·응답 흐름 (Request Flow, 15개 엣지)</text>
+    
+    <line x1="110" y1="2360" x2="160" y2="2360" stroke="#90A4AE" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#arrowDotted)"/>
+    <text x="175" y="2365" font-size="13" fill="#546E7A" font-weight="600">점선: 저장소 접근 (Storage Access, 5개 엣지)</text>
+    
+    <rect x="620" y="2320" width="120" height="26" rx="4" fill="#FFF" stroke="#37474F" stroke-width="1.2"/>
+    <text x="680" y="2338" text-anchor="middle" font-size="11" font-weight="700" fill="#37474F">데이터 타입</text>
+    <text x="750" y="2338" font-size="12" fill="#37474F">: 흰 박스 (굵은 글씨)</text>
+    
+    <rect x="620" y="2354" width="120" height="26" rx="4" fill="#F5F5F5" stroke="#CFD8DC" stroke-width="1"/>
+    <text x="680" y="2371" text-anchor="middle" font-size="10" fill="#546E7A" font-style="italic">예시 값</text>
+    <text x="750" y="2371" font-size="12" fill="#546E7A">: 회색 박스 (이탤릭)</text>
+    
+    <text x="110" y="2405" font-size="12" fill="#37474F" font-weight="600">5단계 데이터 흐름: ① 사용자 → ② UI → ③ FastAPI → ④ AI Core → ⑤ Storage</text>
+    <text x="110" y="2425" font-size="11" fill="#546E7A">각 라벨의 ①~⑮ 번호는 원문 "2.3 데이터 흐름 명세 (A) Request Flow"의 엣지 번호와 일치합니다.</text>
+    <text x="110" y="2445" font-size="11" fill="#546E7A">S1~S5는 "(B) Storage Access" 표의 저장소 접근 번호와 일치합니다.</text>
+  </g>
+</svg>

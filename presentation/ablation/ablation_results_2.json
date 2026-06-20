@@ -1,0 +1,69 @@
+{
+  "exp2": [
+    {
+      "name": "exp2_no_aug",
+      "model": "yolo11n.pt",
+      "map50": 0.7784,
+      "map5095": 0.4784,
+      "recall": 0.7824,
+      "precision": 0.8058,
+      "time_min": 11.4,
+      "best_pt": "/kaggle/working/ablation/exp2_no_aug/weights/best.pt",
+      "gpu_ms": 8.4,
+      "params_m": 2.6,
+      "size_mb": 5.4
+    },
+    {
+      "name": "exp2_mosaic_only",
+      "model": "yolo11n.pt",
+      "map50": 0.8253,
+      "map5095": 0.5385,
+      "recall": 0.8506,
+      "precision": 0.8669,
+      "time_min": 15.2,
+      "best_pt": "/kaggle/working/ablation/exp2_mosaic_only/weights/best.pt",
+      "gpu_ms": 8.6,
+      "params_m": 2.6,
+      "size_mb": 5.4
+    },
+    {
+      "name": "exp2_mosaic_hsv_flip",
+      "model": "yolo11n.pt",
+      "map50": 0.8255,
+      "map5095": 0.5477,
+      "recall": 0.8473,
+      "precision": 0.8719,
+      "time_min": 27.9,
+      "best_pt": "/kaggle/working/ablation/exp2_mosaic_hsv_flip/weights/best.pt",
+      "gpu_ms": 8.5,
+      "params_m": 2.6,
+      "size_mb": 5.4
+    },
+    {
+      "name": "exp2_full_aug",
+      "model": "yolo11n.pt",
+      "map50": 0.82,
+      "map5095": 0.5415,
+      "recall": 0.8236,
+      "precision": 0.8562,
+      "time_min": 18.4,
+      "best_pt": "/kaggle/working/ablation/exp2_full_aug/weights/best.pt",
+      "gpu_ms": 8.6,
+      "params_m": 2.6,
+      "size_mb": 5.4
+    },
+    {
+      "name": "exp2_full_aug_cp",
+      "model": "yolo11n.pt",
+      "map50": 0.82,
+      "map5095": 0.5415,
+      "recall": 0.8236,
+      "precision": 0.8562,
+      "time_min": 18.4,
+      "best_pt": "/kaggle/working/ablation/exp2_full_aug_cp/weights/best.pt",
+      "gpu_ms": 8.7,
+      "params_m": 2.6,
+      "size_mb": 5.4
+    }
+  ]
+}

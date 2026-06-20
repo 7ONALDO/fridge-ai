@@ -1,0 +1,21 @@
+.env
+.venv/
+__pycache__/
+*.py[cod]
+.DS_Store
+
+# 대용량 학습 데이터 (GitHub 100MB 제한 초과)
+*.zip
+smart refrigerator.yolov11/
+smart refrigerator_before.yolov11/
+Recipes Dataset/
+runs/
+
+# 베이스 사전학습 모델 (배포에 불필요 — best.pt만 필요)
+yolo11n.pt
+
+# 수업 프로젝트 폴더
+딥러닝실습 프로젝트/
+
+# 내장 git repo (서브모듈 불필요)
+im2recipe/

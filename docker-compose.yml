@@ -1,0 +1,47 @@
+# 냉장고 AI — 한 번에 API + UI 실행
+# 사용: docker compose up --build
+# 폴더명이 한글(프로젝트)이면 Compose가 project name을 못 잡을 수 있어 name을 고정함
+name: fridge-ai
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: fridge-ai:latest
+    container_name: fridge-api
+    ports:
+      - "8000:8000"
+    environment:
+      YOLO_WEIGHTS: /app/best.pt
+    command:
+      - python
+      - -m
+      - uvicorn
+      - api.main:app
+      - --host
+      - "0.0.0.0"
+      - --port
+      - "8000"
+    restart: unless-stopped
+
+  ui:
+    image: fridge-ai:latest
+    container_name: fridge-ui
+    ports:
+      - "8501:8501"
+    environment:
+      # UI 컨테이너 → API 컨테이너 (localhost 아님!)
+      API_URL: http://api:8000
+    command:
+      - python
+      - -m
+      - streamlit
+      - run
+      - ui/app.py
+      - --server.address=0.0.0.0
+      - --server.port=8501
+      - --browser.gatherUsageStats=false
+    depends_on:
+      - api
+    restart: unless-stopped
