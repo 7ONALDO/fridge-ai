@@ -14,9 +14,9 @@ Kaggle 사용법:
   2) 셀에서:
        !pip install -q ultralytics pyyaml
        # 실험 1번만 돌릴 때:
-       !python ablation_yolo.py --exp 1
+       !python training/ablation_yolo.py --exp 1
        # 전체 돌릴 때:
-       !python ablation_yolo.py --exp all
+       !python training/ablation_yolo.py --exp all
 
 환경변수:
   YOLO_DATA_ROOT  data.yaml이 있는 폴더 (미설정 시 /kaggle/input 자동 탐색)
@@ -49,7 +49,7 @@ PROJECT = os.environ.get("YOLO_PROJECT", "/kaggle/working/ablation")
 
 # PROJECT 경로가 없으면 로컬로 대체
 if not Path(PROJECT).parent.exists():
-    PROJECT = str(Path(__file__).resolve().parent / "ablation")
+    PROJECT = str(Path(__file__).resolve().parent.parent / "ablation")
 
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

@@ -2,6 +2,22 @@
 
 냉장고 사진에서 **YOLOv11**으로 재료를 인식하고, 보유 재료·필터 조건에 맞는 레시피를 **규칙 기반**으로 추천하는 End-to-End 시스템입니다.
 
+## 배포 현황
+
+| 환경 | 앱 (Streamlit) | API (Swagger) |
+|------|----------------|---------------|
+| **Cloud Run (공개 URL)** | https://fridge-ui-579587565890.asia-northeast3.run.app | https://fridge-api-579587565890.asia-northeast3.run.app/docs |
+| **로컬 Docker** | http://127.0.0.1:8501 | http://127.0.0.1:8000/docs |
+| **로컬 개발** | `scripts/run_ui.py` (:8501) | `scripts/run_api.py` (:8000) |
+
+**한 줄 요약 — 지금까지 한 일**
+
+1. **앱 구현** — FastAPI 5개 API + Streamlit 7단계 UI + Core 로직
+2. **로컬 Docker** — `Dockerfile` + `docker-compose.yml`로 API·UI 한 번에 실행
+3. **Cloud Run 배포** — Google Cloud (`fridge-ai-demo`, 서울 리전)에 API·UI 각각 배포, 인터넷 URL로 접속 가능
+
+> 발표·시연 시 **Cloud Run UI URL** 하나만 공유하면 됩니다.
+
 ## 기능 요약
 
 1. **사진 업로드** (여러 장) → YOLO 재료 탐지
@@ -67,7 +83,7 @@
 터미널 **2개** 필요 (API + UI).
 
 ```bash
-cd "/Users/k2/Documents/프로젝트"
+cd ~/Documents/fridge-ai
 source .venv/bin/activate
 pip install -r requirements.txt   # 최초 1회
 
@@ -88,7 +104,7 @@ python3 scripts/run_ui.py     # http://127.0.0.1:8501
 **Docker란?** 앱(API·UI)을 “상자(컨테이너)”에 넣어, 터미널 명령 **한 번**으로 같은 환경에서 실행하는 도구입니다.
 
 ```bash
-cd "/Users/k2/Documents/프로젝트"
+cd ~/Documents/fridge-ai
 
 # 권장 (한글 경로 Buildx 오류 우회)
 chmod +x scripts/docker-up.sh   # 최초 1회
@@ -139,6 +155,70 @@ COMPOSE_BAKE=false docker compose up --build
 - `YOLO_MODEL_PATH` / `YOLO_WEIGHTS` — 기본 `best.pt`
 - `API_URL` — UI에서 API 주소 (기본 `http://127.0.0.1:8000`)
 
+## Google Cloud Run 배포 (공개 URL)
+
+로컬 Docker와 **같은 이미지**를 Google Cloud Run에 올린 상태입니다. Cloud Run은 **컨테이너 1개 = 서비스 1개**라 API·UI를 **각각** 배포합니다.
+
+| 항목 | 값 |
+|------|-----|
+| GCP 프로젝트 | `fridge-ai-demo` |
+| 리전 | `asia-northeast3` (서울) |
+| Docker 이미지 | `asia-northeast3-docker.pkg.dev/fridge-ai-demo/fridge-ai/fridge-ai:latest` |
+| API 서비스 | `fridge-api` — 4Gi RAM, 2 CPU, port 8000 |
+| UI 서비스 | `fridge-ui` — 1Gi RAM, port 8501, `API_URL` → API Cloud Run URL |
+
+### 최초 배포 (참고용 — 이미 완료)
+
+```bash
+# 1) gcloud 로그인·프로젝트
+gcloud auth login
+gcloud config set project fridge-ai-demo
+
+# 2) API 활성화 + 이미지 저장소
+gcloud services enable run.googleapis.com artifactregistry.googleapis.com cloudbuild.googleapis.com
+gcloud artifacts repositories create fridge-ai \
+  --repository-format=docker --location=asia-northeast3
+
+# 3) 이미지 빌드·업로드 (~8분)
+cd ~/Documents/fridge-ai
+gcloud builds submit --tag \
+  asia-northeast3-docker.pkg.dev/fridge-ai-demo/fridge-ai/fridge-ai:latest
+
+# 4) API 배포
+gcloud run deploy fridge-api \
+  --image asia-northeast3-docker.pkg.dev/fridge-ai-demo/fridge-ai/fridge-ai:latest \
+  --region asia-northeast3 --port 8000 --memory 4Gi --cpu 2 --timeout 300 \
+  --allow-unauthenticated \
+  --command python \
+  --args=-m,uvicorn,api.main:app,--host,0.0.0.0,--port,8000 \
+  --set-env-vars YOLO_WEIGHTS=/app/best.pt
+
+# 5) UI 배포
+API_URL=$(gcloud run services describe fridge-api --region asia-northeast3 --format='value(status.url)')
+gcloud run deploy fridge-ui \
+  --image asia-northeast3-docker.pkg.dev/fridge-ai-demo/fridge-ai/fridge-ai:latest \
+  --region asia-northeast3 --port 8501 --memory 1Gi --timeout 300 \
+  --allow-unauthenticated \
+  --command python \
+  --args=-m,streamlit,run,ui/app.py,--server.address=0.0.0.0,--server.port=8501,--browser.gatherUsageStats=false \
+  --set-env-vars API_URL=$API_URL
+```
+
+### 코드 수정 후 재배포
+
+```bash
+cd ~/Documents/fridge-ai
+gcloud builds submit --tag \
+  asia-northeast3-docker.pkg.dev/fridge-ai-demo/fridge-ai/fridge-ai:latest
+# 위 deploy 명령(API → UI 순) 재실행
+```
+
+### 참고
+
+- **Cold start**: 첫 요청 시 YOLO 모델 로딩으로 30초~1분 걸릴 수 있음
+- **비용 절약**: 발표 후 `gcloud run services delete fridge-api fridge-ui --region asia-northeast3`
+- 상세 절차·트러블슈팅: `docs/fridge-recipe-plan-v3.md` §5.7
+
 ## API 예시 (`POST /recipes`)
 
 ```json
@@ -164,9 +244,30 @@ python3 scripts/rank_demo.py --ingredients onion,chicken --source foodsafety --c
 python3 scripts/rank_demo.py --ingredients apple,butter --source allrecipes --category Desserts --top 5
 ```
 
+## 프로젝트 구조
+
+```
+fridge-ai/
+├── README.md              ← 실행·배포 가이드 (이 파일)
+├── Dockerfile             ← API+UI 공용 이미지
+├── docker-compose.yml     ← 로컬 2컨테이너
+├── best.pt                ← YOLO 가중치
+├── requirements.txt
+├── api/                   ← FastAPI
+├── core/                  ← 랭킹·파서·팬트리 등
+├── ui/                    ← Streamlit
+├── data/                  ← 레시피 DB·매핑 JSON
+├── scripts/               ← run_api.py, run_ui.py, docker-up.sh …
+├── training/              ← YOLO 학습·Ablation 스크립트
+├── presentation/          ← Ablation JSON, 학습 그래프
+├── docs/                  ← 계획서·PPT·요약 문서 (docs/README.md)
+└── smart refrigerator.yolov11/   ← YOLO 학습 데이터 (대용량)
+```
+
 ## 문서
 
-- 계획서: `fridge-recipe-plan-v3.md` (§4.2.3~4.2.4 · v3.16 · 부록 O)
-- 요약: `project-final-summary.md`
-- PPT: `ppt-slides-v3.md`
-- 학습: `train_yolo_byclaude.py` · Ablation: `ablation_yolo.py`
+- 목록: [`docs/README.md`](docs/README.md)
+- 계획서: [`docs/fridge-recipe-plan-v3.md`](docs/fridge-recipe-plan-v3.md) (§5.7 배포 · v3.17 · 부록 P)
+- 요약: [`docs/project-final-summary.md`](docs/project-final-summary.md)
+- PPT: [`docs/ppt-slides-v3.md`](docs/ppt-slides-v3.md)
+- 학습: `training/train_yolo_byclaude.py` · Ablation: `training/ablation_yolo.py`

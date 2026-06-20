@@ -76,7 +76,7 @@ Project Overview
 - 재료 인식에 **직접 학습한 CV 모델** 활용
 - **런타임은 외부 API 의존 없이** 로컬 추론으로 동작
 - 재료 정규화 + 커버리지 기반 랭킹
-- Docker 기반 **재현 가능한 배포**
+- Docker 기반 **재현 가능한 배포** + **Google Cloud Run** 공개 URL
 
 ### 시각 요소
 - 3개 박스 가로 배치 또는 아이콘 + 짧은 설명
@@ -106,7 +106,7 @@ Scope of This Project
 **✅ 범위 내 (딥러닝 과제)**
 - YOLOv11 기반 30종 재료 객체 탐지
 - Transfer Learning, Augmentation, Optimizer Ablation
-- FastAPI + Streamlit + Docker 배포
+- FastAPI + Streamlit + Docker·**Cloud Run** 배포
 
 **❌ 범위 외 (의도적 제외)**
 - 협업 필터링 / GNN 기반 추천 모델
@@ -194,7 +194,7 @@ System Architecture (Layered)
 └─────────────────────────────────────────┘
               ↕
 ┌─────────────────────────────────────────┐
-│  Infrastructure — Docker Compose        │
+│  Infrastructure — Docker Compose · Cloud Run    │
 └─────────────────────────────────────────┘
 ```
 
@@ -550,8 +550,13 @@ Evaluation Metrics
 | 지표 | 목표 |
 |---|---|
 | End-to-End 응답 | ≤ 5초 |
-| Docker 이미지 | ≤ 3GB |
+| Docker 이미지 | ≤ 3GB (⚠️ PyTorch+CUDA로 초과 — Cloud Run 동작) |
 | Docker 기동 | 1회 명령 |
+| **Cloud Run URL** | ✅ UI + API 공개 |
+
+**시연 URL**
+- UI: https://fridge-ui-579587565890.asia-northeast3.run.app
+- API: https://fridge-api-579587565890.asia-northeast3.run.app/docs
 
 ---
 
@@ -609,7 +614,7 @@ Development Timeline — 8 Weeks Plan
 |:-:|---|---|
 | **Week 5** | FastAPI 4개 엔드포인트 구현, 레시피 랭킹·Pantry 분류·Scaler 로직 | API 서버 + Swagger, 비즈니스 모듈 |
 | **Week 6** | Streamlit UI 7개 화면 구현, 통합 테스트, 로깅, 에러 핸들링 | Frontend, 통합 리포트 |
-| **Week 7** | Dockerfile + docker-compose, ONNX 변환, 정성 평가 설문, 성능 벤치마크 | 배포 이미지, 평가 결과 |
+| **Week 7** | Dockerfile + docker-compose, **Cloud Run 배포** | ✅ Docker + 공개 URL |
 | **Week 8** | README, 발표 PPT, 시연 영상 촬영, 최종 제출 | 최종 산출물 |
 
 ---
@@ -621,7 +626,8 @@ Development Timeline — 8 Weeks Plan
 | Week 2 말 | ✅ | Baseline 완성 |
 | Week 4 말 | ✅ | 최종 모델 확정 |
 | Week 6 말 | ✅ | End-to-End 통합 완료 |
-| Week 8 말 | 🎯 | 배포 + 최종 발표 |
+| Week 7 말 | ✅ | Docker + Cloud Run 배포 |
+| Week 8 말 | 🎯 | PPT·시연·최종 제출 |
 
 ---
 

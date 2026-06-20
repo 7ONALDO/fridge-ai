@@ -7,7 +7,7 @@ Kaggle 사용법:
   2) GPU 켜기, 필요 시 Internet ON
   3) 터미널 또는 셀에서:
        !pip install -q ultralytics
-       !python train_yolo_kaggle.py
+       !python training/train_yolo_kaggle.py
 
 환경변수 (선택):
   YOLO_DATA_ROOT  - data.yaml 이 있는 디렉터리 (미설정 시 /kaggle/input 아래 자동 탐색)
@@ -86,7 +86,7 @@ def main() -> None:
     name = os.environ.get("YOLO_NAME", "detect_fridge").strip()
 
     if not Path(project).parent.exists():
-        project = str(Path(__file__).resolve().parent / "runs")
+        project = str(Path(__file__).resolve().parent.parent / "runs")
 
     model = YOLO(model_name)
     model.train(

@@ -3,6 +3,22 @@ _Exported on 2026. 6. 9. at 23시 30분 58초 GMT+9 from Cursor (3.7.19)_
 
 ---
 
+> ## 📌 최종 업데이트
+>
+> **Month 2(앱·배포) 대부분 완료.** Docker 로컬 Compose + **Google Cloud Run** 공개 배포까지 끝난 상태.
+>
+> | 항목 | 상태 |
+> |------|------|
+> | FastAPI + Streamlit E2E | ✅ |
+> | Docker (`Dockerfile`, `docker-compose.yml`) | ✅ |
+> | Cloud Run (`fridge-api` + `fridge-ui`) | ✅ |
+> | 공개 UI | https://fridge-ui-579587565890.asia-northeast3.run.app |
+> | 남은 작업 | PPT·시연 영상·스크린샷 (Week 8) |
+>
+> 상세: [`../README.md`](../README.md) · [`fridge-recipe-plan-v3.md`](fridge-recipe-plan-v3.md) §5.7 · [`project-final-summary.md`](project-final-summary.md)
+
+---
+
 **User**
 
 @/Users/k2/Documents/프로젝트 @fridge-recipe-plan-v3.md   @train_yolo_byclaude.py  지금 이 코드를 통해서@best.pt  결과를 도출했어 진행사항 확인해줘

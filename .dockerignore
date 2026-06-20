@@ -7,17 +7,16 @@ __pycache__/
 
 # Docker 빌드에 불필요한 대용량/문서
 smart refrigerator.yolov11/
-smart refrigerator_before.yolov11/
 presentation/
-im2recipe/
 Recipes Dataset/
 *.md
 !README.md
 .git/
 .cursor/
 
-# 학습·실험 (런타임 불필요)
-ablation_yolo.py
-train_yolo*.py
+# 학습·실험·문서 (런타임 불필요)
+training/
+docs/
 runs/
 wandb/
+yolo11n.pt

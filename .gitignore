@@ -7,7 +7,6 @@ __pycache__/
 # 대용량 학습 데이터 (GitHub 100MB 제한 초과)
 *.zip
 smart refrigerator.yolov11/
-smart refrigerator_before.yolov11/
 Recipes Dataset/
 runs/
 
@@ -16,6 +15,3 @@ yolo11n.pt
 
 # 수업 프로젝트 폴더
 딥러닝실습 프로젝트/
-
-# 내장 git repo (서브모듈 불필요)
-im2recipe/

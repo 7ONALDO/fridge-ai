@@ -535,6 +535,31 @@ API 서빙: FastAPI
 
 ---
 
+## 📦 Part 7-1. 냉장고 AI 프로젝트 — 배포 완료 현황
+
+> 이 프로젝트에 실제 적용된 배포 요약. 상세 명령은 [`../README.md`](../README.md) · [`fridge-recipe-plan-v3.md`](fridge-recipe-plan-v3.md) §5.7.
+
+### 세 가지 실행 방법
+
+| 방법 | 용도 | 접속 |
+|------|------|------|
+| **로컬 개발** | 코드 수정 | `run_api.py` + `run_ui.py` |
+| **Docker Compose** | 재현성·리허설 | http://127.0.0.1:8501 |
+| **Cloud Run** | 발표·공개 시연 | https://fridge-ui-579587565890.asia-northeast3.run.app |
+
+### 배포 아키텍처
+
+```
+동일 Docker 이미지 (best.pt + FastAPI + Streamlit)
+    ├── 로컬: docker-compose → fridge-api + fridge-ui
+    └── GCP:  Cloud Build → Artifact Registry → Cloud Run 2서비스
+```
+
+- **GCP 프로젝트**: `fridge-ai-demo` · **리전**: 서울 (`asia-northeast3`)
+- UI 컨테이너는 `API_URL` 환경변수로 API Cloud Run URL 호출 (로컬 Docker의 `http://api:8000`과 동일 역할)
+
+---
+
 ## 🧭 Part 8. 프로젝트 작성 시 핵심 원칙
 
 ### 계획서 단계에서 반드시 기억할 5가지
@@ -543,7 +568,7 @@ API 서빙: FastAPI
 2. **데이터가 부족하면 전이학습과 데이터 증강이 핵심** — 처음부터 큰 모델 학습은 비효율
 3. **성능이 안 나오면 원인 먼저 진단** — 과대적합/과소적합/데이터 문제/모델 문제 구분
 4. **일반화 도구들을 적극 활용** — BN, 초기화, L1/L2, weight decay, dropout, augmentation, early stopping
-5. **마지막에 보여줄 수 있어야 좋은 프로젝트** — Streamlit, FastAPI, Docker, ONNX가 완성도를 만듦
+5. **마지막에 보여줄 수 있어야 좋은 프로젝트** — Streamlit, FastAPI, Docker, Cloud Run (냉장고 AI는 **Cloud Run 배포 완료**)
 
 ### 계획서 단계에서 피해야 할 함정
 

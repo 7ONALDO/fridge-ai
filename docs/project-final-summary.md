@@ -31,8 +31,25 @@
 | 프론트엔드 | Streamlit | 웹 UI (7단계 화면) |
 | 데이터 처리 | Python (csv, json) | 레시피 파싱, 점수 계산 |
 | 번역 | OpenAI GPT-4o-mini | 영문 레시피 → 한국어 |
+| **배포 (로컬)** | Docker Compose | API+UI 컨테이너 한 번에 기동 |
+| **배포 (공개)** | Google Cloud Run | 인터넷 URL로 시연 |
 
 ---
+
+## 2-1. 배포 현황
+
+| 환경 | 앱 | API |
+|------|-----|-----|
+| **Cloud Run** | https://fridge-ui-579587565890.asia-northeast3.run.app | https://fridge-api-579587565890.asia-northeast3.run.app/docs |
+| **로컬 Docker** | http://127.0.0.1:8501 | http://127.0.0.1:8000/docs |
+
+**배포 흐름 요약**
+
+1. `Dockerfile`로 API·UI **공용 이미지** 빌드 (`best.pt` 포함)
+2. **로컬**: `docker-compose.yml` → `fridge-api` + `fridge-ui` 2컨테이너
+3. **클라우드**: Cloud Build → Artifact Registry → Cloud Run 2서비스 (서울 리전)
+
+상세: [`../README.md`](../README.md) · [`fridge-recipe-plan-v3.md`](fridge-recipe-plan-v3.md) §5.7
 
 ## 3. 데이터셋
 
@@ -269,48 +286,24 @@ rating    = Allrecipes: 실제 별점 / 한식: **없음** → 랭킹용 3.0 (UI
 ## 9. 프로젝트 파일 구조
 
 ```
-프로젝트/
-│
-├── best.pt                    ← 학습된 YOLO 모델 가중치 (5.2MB)
-│
-├── api/
-│   ├── main.py                ← FastAPI 서버 (5개 엔드포인트)
-│   ├── predictor.py           ← YOLO 추론 + 결과 집계
-│   └── schemas.py             ← 요청/응답 데이터 형식 정의
-│
-├── core/
-│   ├── normalizer.py          ← 탐지 결과 정규화
-│   ├── ingredient_parser.py   ← 재료 파싱 + 조리법 보강
-│   ├── custom_match.py        ← 자유 입력 재료 ↔ unmapped 매칭
-│   ├── pantry.py              ← 재료 4구간 분류
-│   ├── ranker.py              ← 레시피 점수·페이지네이션
-│   ├── recipe_categories.py   ← 필터·카테고리 (19개)
-│   └── scaler.py              ← 인분 조절
-│
-├── ui/
-│   ├── app.py                 ← Streamlit 7단계 (통합 재료·식단 토글·페이지네이션)
-│   ├── filter_counts.py       ← rankable 건수 + diet_combo_count
-│   └── api_client.py          ← FastAPI HTTP 클라이언트
-│
-├── data/
-│   ├── recipes_merged.csv     ← 레시피 DB (2,236개)
-│   ├── mapping_ko.json        ← 한국어 재료명 ↔ YOLO 클래스
-│   ├── mapping.json           ← 영어 재료명 ↔ YOLO 클래스
-│   └── pantry.json            ← 상비재 목록
-│
-└── scripts/
-    ├── run_api.py             ← API 서버 실행 스크립트
-    ├── run_ui.py              ← UI 실행 스크립트
-    └── translate_recipes.py   ← 레시피 한국어 번역 스크립트
+fridge-ai/
+├── best.pt                    ← YOLO 가중치
+├── Dockerfile · docker-compose.yml
+├── api/ · core/ · ui/ · data/
+├── scripts/                   ← run_api.py, run_ui.py, docker-up.sh …
+├── training/                  ← train_yolo_byclaude.py, ablation_yolo.py
+├── presentation/              ← Ablation JSON, 학습 그래프
+└── docs/                      ← 계획서·PPT·요약 (docs/README.md)
 ```
 
 ---
 
 ## 10. 실행 방법
 
+### 로컬 개발 (코드 수정용)
+
 ```bash
-# 가상환경 활성화
-cd "/Users/k2/Documents/프로젝트"
+cd ~/Documents/fridge-ai
 source .venv/bin/activate
 
 # 터미널 1 — API 서버 시작
@@ -321,6 +314,19 @@ python3 scripts/run_api.py
 python3 scripts/run_ui.py
 # → http://localhost:8501  (브라우저에서 사용)
 ```
+
+### Docker (로컬 한 번에)
+
+```bash
+cd ~/Documents/fridge-ai
+./scripts/docker-up.sh
+# → http://127.0.0.1:8501 (UI) · http://127.0.0.1:8000/docs (API)
+```
+
+### Cloud Run (공개 URL · 발표용)
+
+- **앱**: https://fridge-ui-579587565890.asia-northeast3.run.app
+- **API**: https://fridge-api-579587565890.asia-northeast3.run.app/docs
 
 ---
 
@@ -334,8 +340,9 @@ python3 scripts/run_ui.py
 | FastAPI 서버 | ✅ 완료 | 5개 엔드포인트 |
 | Streamlit UI | ✅ 완료 | 7단계, v3.16 — 통합 재료·식단 토글·페이지네이션·4열 상세 |
 | 레시피 한국어 번역 | 🔄 진행 중 | GPT-4o-mini, 1,090개 |
-| Docker 컨테이너화 | ⬜ 미착수 | Week 7 예정 |
-| 발표 자료 | ⬜ 미착수 | Week 8 예정 |
+| Docker 컨테이너화 | ✅ 완료 | `Dockerfile`, `docker-compose.yml`, 로컬 Compose 기동 |
+| Cloud Run 배포 | ✅ 완료 | `fridge-api` + `fridge-ui`, GCP `fridge-ai-demo`, 서울 리전 |
+| 발표 자료 | ⬜ 미착수 | Week 8 예정 — Cloud Run UI URL로 시연 |
 
 ---
 

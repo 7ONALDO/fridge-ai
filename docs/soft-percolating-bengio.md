@@ -3,7 +3,7 @@
 ## Context
 딥러닝 수업 프로젝트 결과물을 설명해야 함.
 전체 흐름부터 구현 세부 내용까지 단계적으로 정리된 MD 문서 생성.
-저장 위치: `/Users/k2/Documents/프로젝트/project-learning-summary.md`
+저장 위치: `docs/project-learning-summary.md`
 
 ---
 
@@ -22,7 +22,8 @@
 | 백엔드 | FastAPI + Uvicorn |
 | 프론트엔드 | Streamlit |
 | 데이터 처리 | Python, Pandas |
-| 번역 | OpenAI GPT-4o-mini |
+| **배포 (로컬)** | Docker Compose | API+UI 한 번에 기동 |
+| **배포 (공개)** | Google Cloud Run | 발표·시연 URL |
 
 ### 4. 데이터셋
 - YOLO 학습: Smart Refrigerator YOLOv11 (Roboflow), 3,049장, 30클래스, 80/10/10
@@ -86,12 +87,13 @@ Storage Layer → best.pt, recipes_merged.csv, mapping.json, pantry.json
 | Core 모듈 | ✅ 완료 |
 | Streamlit UI | ✅ 완료 |
 | 레시피 한국어 번역 | 🔄 진행 중 |
-| Docker | ⬜ 미착수 |
+| Docker (로컬) | ✅ 완료 |
+| Cloud Run (공개) | ✅ 완료 |
 
 ---
 
 ## 작성 파일
-`/Users/k2/Documents/프로젝트/project-learning-summary.md`
+`docs/project-learning-summary.md`
 
 깔끔한 한국어로, 비전공자도 이해할 수 있게 작성.
 코드보다는 흐름과 개념 위주, 구체적인 수치(mAP, 레시피 수 등)는 포함.

@@ -36,8 +36,12 @@
 │  └──────────┘  └──────────┘  └──────────┘  └──────────┘        │
 └─────────────────────────────────────────────────────────────────┘
          │
-   [Docker Compose: FastAPI + Streamlit 단일 스택]
+   [Docker Compose (로컬) / Cloud Run (공개 URL)]
          ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│  Infrastructure Layer — Docker                                  │
+│  Infrastructure Layer — Docker · Google Cloud Run               │
 └─────────────────────────────────────────────────────────────────┘
+
+### 공개 URL
+- UI: https://fridge-ui-579587565890.asia-northeast3.run.app
+- API: https://fridge-api-579587565890.asia-northeast3.run.app/docs

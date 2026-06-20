@@ -9,10 +9,10 @@ Kaggle 사용법:
   3) 새 셀에서 실행:
 
        !pip install -q ultralytics pyyaml
-       !python train_yolo_byclaude.py
+       !python training/train_yolo_byclaude.py
 
 로컬 사용법:
-  YOLO_DATA_ROOT=/path/to/dataset python train_yolo_byclaude.py
+  YOLO_DATA_ROOT=/path/to/dataset python training/train_yolo_byclaude.py
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 환경변수 (선택 — 기본값으로도 바로 실행 가능):
@@ -413,7 +413,7 @@ def main() -> None:
     # PROJECT 경로가 /kaggle/working 기준인데 로컬이면 현재 폴더로 대체
     global PROJECT
     if not Path(PROJECT).parent.exists():
-        PROJECT = str(Path(__file__).resolve().parent / "runs")
+        PROJECT = str(Path(__file__).resolve().parent.parent / "runs")
 
     data_yaml = find_data_yaml()  # data.yaml 탐색
     check_split(data_yaml)        # 분할 비율 확인
