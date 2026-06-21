@@ -4,12 +4,33 @@ from __future__ import annotations
 
 import re
 
-from core.ingredient_parser import ParsedIngredient
+from core.ingredient_parser import ParsedIngredient, is_recipe_noise_item
 
 EXCLUDE_UNMAPPED = re.compile(
-    r"(broth|stock|bouillon|consomme|육수|멸치육수|다시마)",
+    r"(broth|stock|bouillon|consomme|육수|멸치육수|다시마|"
+    r"나누어\s*사용|기호에\s*따라|필요에\s*따라|선택\s*사항)",
     re.IGNORECASE,
 )
+
+# 부분 일치만으로는 안 잡히거나 한 글자 입력(쌀)이 건너뛰어지는 재료
+RICE_EQUIV = frozenset(
+    {
+        "쌀",
+        "멥쌀",
+        "밥",
+        "쌀밥",
+        "현미",
+        "보리",
+        "찹쌀",
+        "잡곡",
+        "곡물",
+        "현미밥",
+        "보리밥",
+        "백미",
+        "통곡물",
+    }
+)
+CUSTOM_EQUIV_GROUPS: tuple[frozenset[str], ...] = (RICE_EQUIV,)
 
 
 def normalize_custom_name(name: str) -> str:
@@ -50,6 +71,8 @@ def is_unmapped_requirement(item: ParsedIngredient) -> bool:
     if EXCLUDE_UNMAPPED.search(item.raw_name or ""):
         return False
     name = (item.name or item.raw_name or "").strip()
+    if is_recipe_noise_item(name):
+        return False
     return bool(name)
 
 
@@ -79,6 +102,22 @@ def _item_tokens(item: ParsedIngredient) -> list[str]:
     return tokens
 
 
+def _expand_custom_names(names: set[str]) -> set[str]:
+    out = set(names)
+    for group in CUSTOM_EQUIV_GROUPS:
+        if names & group:
+            out |= group
+    return out
+
+
+def _is_valid_custom_key(name: str) -> bool:
+    if len(name) >= 2:
+        return True
+    if len(name) == 1 and not name.isascii():
+        return any(name in group for group in CUSTOM_EQUIV_GROUPS)
+    return False
+
+
 def custom_matches_item(
     custom_names: set[str],
     item: ParsedIngredient,
@@ -86,9 +125,10 @@ def custom_matches_item(
     """사용자 입력 재료명 ↔ 레시피 항목 (동의어·부분 일치 허용)."""
     if not custom_names:
         return False
+    effective = _expand_custom_names(custom_names)
     item_tokens = _item_tokens(item)
-    for custom in custom_names:
-        if len(custom) < 2:
+    for custom in effective:
+        if not _is_valid_custom_key(custom):
             continue
         for token in item_tokens:
             if custom == token:

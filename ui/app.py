@@ -14,9 +14,12 @@ from core.recipe_categories import (
     FOODSAFETY_CATEGORY_COUNT,
     FOODSAFETY_CATEGORY_HELP,
     RECIPE_SOURCE_OPTIONS,
+    TOTAL_CATEGORY_COUNT,
     UI_NONE,
     allrecipes_category_options,
+    combined_category_options,
     foodsafety_category_options,
+    parse_composite_category,
 )
 from core.ingredient_parser import ParsedIngredient
 from core.pantry import format_amount_display, scale_item_quantity
@@ -80,6 +83,7 @@ def _init_state() -> None:
         "recipes": [],
         "recipe_total": 0,
         "recipe_page": 0,
+        "recipe_name_query": "",
         "selected_recipe": None,
         "detail": None,
         "scaled": None,
@@ -239,18 +243,24 @@ def _recipe_filter_params() -> tuple[str | None, str | None, list[str]]:
         if st.session_state.category != UI_NONE
         else None
     )
+    if category and ":" in category:
+        cat_source, cat_key = parse_composite_category(category)
+        source = cat_source or source
+        category = cat_key
     diets = list(st.session_state.get("diets") or [])
     return source, category, diets
 
 
 def _fetch_recipes_page(page: int) -> None:
     source, category, diets = _recipe_filter_params()
+    name_query = (st.session_state.get("recipe_name_query") or "").strip() or None
     data = search_recipes(
         st.session_state.ingredients,
         custom_ingredients=_custom_for_api(),
         source=source,
         category=category,
         diets=diets or None,
+        name_query=name_query,
         top_k=RECIPES_PAGE_SIZE,
         offset=page * RECIPES_PAGE_SIZE,
         base=st.session_state.api_url,
@@ -337,6 +347,11 @@ def _render_diet_toggle_buttons(dcounts: dict[str, int]) -> list[str]:
                 _toggle_diet(diet_key)
                 st.rerun()
     return list(st.session_state.get("diets") or [])
+
+
+def _safe_markdown_text(text: str) -> str:
+    """Streamlit 마크다운에서 ``2~3``, ``12~15`` 등이 취소선으로 렌더되지 않게 ``~`` 이스케이프."""
+    return re.sub(r"(?<!\~)~(?!~)", r"\\~", text)
 
 
 def _is_korean_recipe(source: str | None) -> bool:
@@ -555,7 +570,10 @@ def _step_source() -> None:
         format_func=lambda x: _source_radio_label(x, scounts),
     )
     if choice != st.session_state.recipe_source:
-        st.session_state.category = UI_NONE
+        st.session_state.category = _normalize_category_for_source(
+            st.session_state.category,
+            choice,
+        )
     st.session_state.recipe_source = choice
     _nav(2, 4)
 
@@ -566,7 +584,28 @@ def _category_options() -> list[tuple[str, str]]:
         return foodsafety_category_options()
     if src == "allrecipes":
         return allrecipes_category_options()
-    return [(UI_NONE, "출처를 먼저 선택하세요 (또는 전체 검색)")]
+    return combined_category_options()
+
+
+def _normalize_category_for_source(raw: str, src: str) -> str:
+    """출처 변경 시 이전 카테고리 선택을 새 옵션 목록에 맞게 변환."""
+    if src == "foodsafety":
+        if raw.startswith("foodsafety:"):
+            tail = raw.split(":", 1)[1]
+            return tail if tail else UI_NONE
+        if raw.startswith("allrecipes:"):
+            return UI_NONE
+        return raw
+    if src == "allrecipes":
+        if raw.startswith("allrecipes:"):
+            tail = raw.split(":", 1)[1]
+            return tail if tail else UI_NONE
+        if raw.startswith("foodsafety:"):
+            return UI_NONE
+        return raw
+    if src == UI_NONE and raw and ":" not in raw and raw != UI_NONE:
+        return f"foodsafety:{raw}"
+    return raw
 
 
 def _step_category() -> None:
@@ -583,7 +622,11 @@ def _step_category() -> None:
             "괄호 = **현재 재료·선택 출처** 기준 추천 가능 건수."
         )
     else:
-        st.caption("「전체」를 고르면 카테고리 없이 모든 레시피에서 검색합니다.")
+        st.caption(
+            f"「전체」 선택 시 **한식 {FOODSAFETY_CATEGORY_COUNT}개 + "
+            f"양식 {ALLRECIPES_CATEGORY_COUNT}개 = {TOTAL_CATEGORY_COUNT}개** "
+            "세부 카테고리를 모두 고를 수 있습니다. 괄호 = 현재 재료 기준 추천 가능 건수."
+        )
 
     options = _category_options()
     values = [v for v, _ in options]
@@ -595,6 +638,8 @@ def _step_category() -> None:
     )
     current = st.session_state.category
     if current not in values:
+        current = _normalize_category_for_source(current, src)
+    if current not in values:
         current = values[0]
 
     choice = st.radio(
@@ -602,10 +647,9 @@ def _step_category() -> None:
         values,
         index=values.index(current),
         format_func=lambda x: _category_radio_label(x, labels, cat_counts),
-        disabled=(src == UI_NONE),
     )
     st.session_state.category = choice
-    if src == "foodsafety" and choice == "일품":
+    if choice in ("일품", "foodsafety:일품"):
         st.info(FOODSAFETY_CATEGORY_HELP["일품"])
     _nav(3, 5)
 
@@ -617,10 +661,11 @@ def _step_diet() -> None:
         "여러 개를 고르면 **모두 만족(AND)** 하는 레시피만 추천됩니다. "
         f"6단계에서는 **페이지당 {RECIPES_PAGE_SIZE}개**씩 전체 목록을 볼 수 있습니다."
     )
+    filt_source, filt_category, _ = _recipe_filter_params()
     dcounts = diet_counts(
         st.session_state.ingredients or {},
-        st.session_state.recipe_source,
-        st.session_state.category,
+        filt_source,
+        filt_category,
         _custom_for_api(),
     )
     none_count = dcounts.get(UI_NONE, 0)
@@ -628,8 +673,8 @@ def _step_diet() -> None:
     if selected:
         combo = diet_combo_count(
             st.session_state.ingredients or {},
-            st.session_state.recipe_source,
-            st.session_state.category,
+            filt_source,
+            filt_category,
             selected,
             _custom_for_api(),
         )
@@ -651,6 +696,30 @@ def _step_diet() -> None:
 
 def _step_recipes() -> None:
     st.title("6. 추천 레시피")
+    with st.form("recipe_name_search", clear_on_submit=False):
+        q = st.text_input(
+            "레시피 이름 검색",
+            value=st.session_state.get("recipe_name_query") or "",
+            placeholder="예: 밥 → 컵밥·비빔밥, 김치 → 김치볶음밥",
+        )
+        c1, c2 = st.columns(2)
+        with c1:
+            submitted = st.form_submit_button("검색", type="primary")
+        with c2:
+            cleared = st.form_submit_button("검색 초기화")
+    if submitted:
+        st.session_state.recipe_name_query = q.strip()
+        with st.spinner("레시피 불러오는 중..."):
+            _fetch_recipes_page(0)
+            st.rerun()
+    if cleared:
+        st.session_state.recipe_name_query = ""
+        with st.spinner("레시피 불러오는 중..."):
+            _fetch_recipes_page(0)
+            st.rerun()
+    if st.session_state.get("recipe_name_query"):
+        st.caption(f"검색어: **{st.session_state.recipe_name_query}**")
+
     recipes = st.session_state.recipes
     total = int(st.session_state.get("recipe_total") or len(recipes))
     page = int(st.session_state.get("recipe_page") or 0)
@@ -691,6 +760,16 @@ def _step_recipes() -> None:
     if st.button("← 필터 다시"):
         st.session_state.step = 5
         st.rerun()
+
+
+def _scaled_amount_cells(quantity: float | None, unit: str | None) -> tuple[str, str]:
+    """인분 조정 테이블용 (양, 단위) — 숫자와 단위를 분리."""
+    if quantity is not None:
+        qty_text = str(int(quantity)) if quantity == int(quantity) else str(quantity)
+        return qty_text, unit or ""
+    if unit:
+        return unit, ""
+    return "기호에 따라", ""
 
 
 def _step_detail() -> None:
@@ -804,23 +883,26 @@ def _step_detail() -> None:
     scaled = st.session_state.scaled
     if scaled:
         st.subheader(f"인분 {scaled['new_servings']}인 기준 전체 재료")
-        st.dataframe(
-            [
+        scaled_rows = []
+        for row in scaled.get("ingredients") or []:
+            amt, unit = _scaled_amount_cells(row.get("quantity"), row.get("unit"))
+            scaled_rows.append(
                 {
                     "재료": row["raw_name"],
-                    "양": row["quantity"] if row["quantity"] is not None else "기호에 따라",
-                    "단위": row["unit"] or "",
+                    "양": amt,
+                    "단위": unit,
                     "비고": "양념" if row["scale_mode"] == "seasoning" else "주재료",
                 }
-                for row in scaled.get("ingredients") or []
-            ],
+            )
+        st.dataframe(
+            scaled_rows,
             use_container_width=True,
             hide_index=True,
         )
 
     st.subheader("조리 방법")
     for i, line in enumerate(detail.get("directions") or [], start=1):
-        st.write(f"{i}. {line}")
+        st.markdown(f"{i}. {_safe_markdown_text(line)}")
 
     if st.button("← 추천 목록"):
         st.session_state.step = 6

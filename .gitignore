@@ -13,5 +13,16 @@ runs/
 # 베이스 사전학습 모델 (배포에 불필요 — best.pt만 필요)
 yolo11n.pt
 
-# 수업 프로젝트 폴더
+# 수업 프로젝트 폴더 (루트)
 딥러닝실습 프로젝트/
+
+# 로컬 전용 문서 — GitHub 미공개 (과제·보고서·내부 메모)
+docs/딥러닝실습_프로젝트_계획서.md
+docs/fridge-recipe-plan-v3.md
+docs/ppt-slides-v3.md
+docs/project-learning-summary.md
+docs/report-outline.md
+docs/report.md
+docs/README.md
+docs/assets/screenshots/
+docs/course/

@@ -15,6 +15,7 @@
 1. **앱 구현** — FastAPI 5개 API + Streamlit 7단계 UI + Core 로직
 2. **로컬 Docker** — `Dockerfile` + `docker-compose.yml`로 API·UI 한 번에 실행
 3. **Cloud Run 배포** — Google Cloud (`fridge-ai-demo`, 서울 리전)에 API·UI 각각 배포, 인터넷 URL로 접속 가능
+4. **한국어 DB·파서 정합 (v3.18)** — `recipes_merged_ko.csv` 기본, 번역 레시피 파서·노이즈 필터, 6단계 **레시피명 검색**, `쌀`↔`멥쌀` custom 매칭
 
 > 발표·시연 시 **Cloud Run UI URL** 하나만 공유하면 됩니다.
 
@@ -25,16 +26,17 @@
 3. **레시피 종류** — 전체 / 한식(식약처) / 양식(Allrecipes) — **괄호 = 추천 가능 건수**
 4. **세부 카테고리** — 출처별 분류 (아래 표) — **괄호 = 추천 가능 건수**
 5. **식단 필터** — 7종 **토글 버튼 복수 선택(AND)** — 단독 괄호 + **선택 조합 N건**
-6. **레시피 추천** — **페이지당 20건**, 이전/다음으로 전체 목록 탐색
+6. **레시피 추천** — **페이지당 20건**, 이전/다음으로 전체 목록 탐색 · **레시피명 검색** (부분 일치, 예: `밥` → `비빔밥`)
 7. **상세** — 재료 **4열**(보유·추가구매·상비·**기타**), 인분 자동 스케일, 조리법
 
 ## 레시피 데이터
 
 | 출처 | 파일 | 건수 | 분류 필드 |
 |---|---|---:|---|
-| **Allrecipes** | `Recipes Dataset/recipes.csv` | 1,090 | `cuisine_path` **1단계** (예: `/Desserts/...`) |
-| **식약처** | API → `data/recipes_merged.csv` | 1,146 | `/한식/{유형}` (반찬, 일품, …) |
-| **병합 DB** | `data/recipes_merged.csv` | ~2,107 | `source` = `allrecipes` \| `foodsafety` |
+| **Allrecipes** | `Recipes Dataset/recipes.csv` (원본) | 1,090 | `cuisine_path` **1단계** (예: `/Desserts/...`) |
+| **식약처** | API → 병합 DB | 1,146 | `/한식/{유형}` (반찬, 일품, …) |
+| **병합 DB (런타임)** | **`data/recipes_merged_ko.csv`** | **~2,236** | `source` = `allrecipes` \| `foodsafety` · Allrecipes 본문·재료 **한국어 번역** |
+| **병합 DB (보관)** | `data/recipes_merged.csv` | ~2,107 | 영문 Allrecipes 원본 병합 (구버전) |
 
 ### 카테고리 (필터) — 총 19개 (출처별 택1)
 
@@ -68,14 +70,14 @@
 
 - **의미**: 지금 2단계 재료 기준 rankable 수. **카테고리**는 상호 배타(합 일치). **식단**은 **겹칠 수 있음**(옵션 합 ≠ 전체).
 - **5단계 복수 선택**: **「현재 선택 조합: N건」** = 6단계 `total_rankable` 과 동일.
-- **6단계**: 한 화면 **20건**씩, **← 이전 / 다음 →** 로 전체 탐색.
+- **6단계**: 한 화면 **20건**씩, **← 이전 / 다음 →** 로 전체 탐색. 상단 **레시피명 검색** (`filters.name_query`, 공백 무시 부분 일치).
 - **구현**: `ui/filter_counts.py` → `core/ranker.py` `count_rankable_recipes()`.
 
 ### 2단계 재료 확인 (통합 UI)
 
 - **하나의 표**에 인식·직접 추가 재료 통합 (구분 열 없음).
 - 표에서 **− / +** 수량 변경, **삭제** 즉시 반영.
-- **재료 추가**: 이름 입력 → `mapping_ko.json` 매칭 시 YOLO `ingredients`, 아니면 `custom_ingredients` (예: 김치, 두부).
+- **재료 추가**: 이름 입력 → `mapping_ko.json` 매칭 시 YOLO `ingredients`, 아니면 `custom_ingredients` (예: 김치, **쌀**). **`custom_match.py`** 동의어 — 김치↔배추김치, **쌀↔멥쌀·쌀밥** (7단계 **기타** 열에 **보유(직접입력)** 표시).
 - 백엔드·API는 **`ingredients` + `custom_ingredients`** 분리 유지.
 
 ## 실행
@@ -228,7 +230,8 @@ gcloud builds submit --tag \
   "filters": {
     "source": "foodsafety",
     "category": "국&찌개",
-    "diets": ["low-carb", "sugar-free"]
+    "diets": ["low-carb", "sugar-free"],
+    "name_query": "밥"
   },
   "top_k": 20,
   "offset": 0
@@ -267,7 +270,7 @@ fridge-ai/
 ## 문서
 
 - 목록: [`docs/README.md`](docs/README.md)
-- 계획서: [`docs/fridge-recipe-plan-v3.md`](docs/fridge-recipe-plan-v3.md) (§5.7 배포 · v3.17 · 부록 P)
+- 계획서: [`docs/fridge-recipe-plan-v3.md`](docs/fridge-recipe-plan-v3.md) (§5.7 배포 · v3.18 · 부록 P·Q)
 - 요약: [`docs/project-final-summary.md`](docs/project-final-summary.md)
 - PPT: [`docs/ppt-slides-v3.md`](docs/ppt-slides-v3.md)
-- 학습: `training/train_yolo_byclaude.py` · Ablation: `training/ablation_yolo.py`
+- 학습: `training/train_yolo.py` · Ablation: `training/ablation_yolo.py`

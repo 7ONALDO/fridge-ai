@@ -133,7 +133,7 @@ def _directions_list(text: str) -> list[str]:
 async def lifespan(app: FastAPI):
     weights = Path(os.environ.get("YOLO_WEIGHTS", str(ROOT / "best.pt")))
     recipes_path = Path(
-        os.environ.get("RECIPES_CSV", str(ROOT / "data" / "recipes_merged.csv"))
+        os.environ.get("RECIPES_CSV", str(ROOT / "data" / "recipes_merged_ko.csv"))
     )
 
     predictor = IngredientPredictor(weights_path=weights)
@@ -265,6 +265,7 @@ def search_recipes(
             source=query.filters.source,
             category=query.filters.category,
             diets=diets,
+            name_query=query.filters.name_query,
         )
 
     total_rankable = count_rankable_recipes(
@@ -376,7 +377,7 @@ def scale_recipe(
     from core.scaler import _parse_servings
 
     scaled = scale_ingredients(
-        recipe.ingredients,
+        recipe.parsed,
         recipe.servings,
         body.new_servings,
         source=recipe.parse_source,

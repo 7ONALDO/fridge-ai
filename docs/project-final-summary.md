@@ -15,7 +15,7 @@
         ↓
 🍽️ 원하는 조건 선택   ← DB 출처 / 카테고리 / 식단 복수(AND) · 토글 버튼
         ↓
-📋 레시피 추천 목록   ← 페이지당 20건 · 전체 탐색 (total_rankable)
+📋 레시피 추천 목록   ← 페이지당 20건 · 레시피명 검색 · 전체 탐색 (total_rankable)
         ↓
 📖 레시피 상세 보기   ← 재료 4구간(기타 포함) + 조리 방법 + 인분 조절
 ```
@@ -55,8 +55,8 @@
 
 ### 3-1. YOLO 학습 데이터
 - **출처**: Roboflow — Smart Refrigerator YOLOv11
-- **총 이미지**: 3,049장
-- **분할 비율**: 학습(train) 80% / 검증(val) 10% / 테스트(test) 10%
+- **총 이미지**: 3,196장
+- **분할**: train **2,895** / valid **150** / test **151** (valid+test 50:50 재분할)
 - **클래스 수**: 30개
 
 **탐지 가능한 30가지 재료:**
@@ -76,8 +76,8 @@
 
 ### 3-2. 레시피 데이터
 - **식약처(foodsafety)**: 한식 레시피 1,146개 — 처음부터 한국어, **완성 요리 사진** (`foodsafetykorea.go.kr/uploadimg/...`), **별점·조리시간(분) 없음**
-- **allrecipes**: 영어 레시피 1,090개 — **사용자 별점**·prep/cook/total 시간·Allrecipes 썸네일
-- **합계**: `recipes_merged.csv` ~2,107건
+- **allrecipes**: 영어 레시피 1,090개 — **사용자 별점**·prep/cook/total 시간·Allrecipes 썸네일 → **GPT-4o-mini 한국어 번역** 후 병합
+- **런타임 DB**: **`data/recipes_merged_ko.csv`** **2,236건** (구버전 `recipes_merged.csv`는 보관용)
 
 ---
 
@@ -100,16 +100,16 @@
 | Augmentation | Mosaic, HSV, Flip | 다양한 각도·밝기 학습 |
 | Pretrained | COCO 사전학습 | 전이학습으로 빠른 수렴 |
 
-### 4-3. 학습 결과
+### 4-3. 학습 결과 (test 151장 — 공식 지표)
 
 | 지표 | 의미 | 결과 | 목표 |
 |------|------|------|------|
-| mAP@0.5 | 탐지 정확도 (IOU 50% 기준) | **0.994** | ≥ 0.70 |
-| mAP@0.5:0.95 | 더 엄격한 정확도 | **0.839** | ≥ 0.45 |
-| Recall | 실제 재료를 놓치지 않는 비율 | **0.989** | ≥ 0.70 |
-| Precision | 탐지 결과 중 맞은 비율 | **0.995** | 참고 |
+| mAP@0.5 | 탐지 정확도 (IOU 50% 기준) | **0.870** | ≥ 0.70 |
+| mAP@0.5:0.95 | 더 엄격한 정확도 | **0.569** | ≥ 0.45 |
+| Recall | 실제 재료를 놓치지 않는 비율 | **0.879** | ≥ 0.70 |
+| 추론 속도 (GPU) | 이미지당 | **9.2 ms** | ≤ 10 ms |
 
-> ⚠️ **주의**: val/test 데이터에 augmentation이 적용된 이미지가 포함되어 수치가 실제보다 높을 수 있음
+> Ablation은 val 150장·50 epoch, **최종 성능은 test 151장·100 epoch `best.pt` 기준** (계획서 §6.1).
 
 ---
 
@@ -134,7 +134,7 @@
                   │ 파일 읽기
 ┌─────────────────▼────────────────────────────┐
 │  Storage Layer — 데이터 파일들               │
-│  best.pt  /  recipes_merged.csv              │
+│  best.pt  /  recipes_merged_ko.csv           │
 │  mapping.json  /  pantry.json                │
 └──────────────────────────────────────────────┘
 ```
@@ -156,11 +156,12 @@ YOLO가 탐지한 클래스명을 **표준 30개 클래스**로 통일.
 
 ---
 
-### ingredient_parser.py — 레시피 재료 파싱
+### ingredient_parser.py — 레시피 재료 파싱 *(v3.18)*
+
 레시피의 재료 문자열을 구조화된 데이터로 분해.
 
 ```
-입력: "3 tablespoons butter"
+입력: "3 tablespoons butter"  (또는 번역본 "버터 3큰술")
 출력: { 이름: butter, 양: 3.0, 단위: tablespoons, YOLO클래스: butter }
 
 입력: "돼지고기(70g), 콩나물(150g)"
@@ -170,21 +171,28 @@ YOLO가 탐지한 클래스명을 **표준 30개 클래스**로 통일.
 | 출처 | 파싱 특징 |
 |------|-----------|
 | **Allrecipes** | 한 줄 쉼표 목록 — **새 재료가 시작하는 쉼표**에서만 분리 |
-| **식약처** | `재료명(70g)`, `연두부 75g(3/4모)` 형식 지원 |
+| **Allrecipes (한글)** | **`resolve_parse_source()`** — 번역 본문은 **한국어 파서** 사용 |
+| **식약처** | `재료명(70g)`, `연두부 75g(3/4모)` · 선두 `재료 ` 접두 제거 |
 | **식약처** | `양념장 :`, `•필수 재료 :` | 섹션 헤더 제거 후 재료 파싱 |
-| **공통** | 조리법에만 등장 | `supplement_from_directions()` 사전 기반 보강 |
+| **노이즈 필터** | `씨를 제거하고 …`, `껍질을 벗기고 …`, `한 입 크기로 …`, `간 것`, `또는 기호에 따라 더 추가` 등 **재료 아님** |
+| **괄호 처리** | **`_strip_trailing_paren_note`** — `(40g)` **유지**, `(선택 사항)` 등 메모만 제거 |
+| **번역 수량** | `¼작은술` → **`KO_ITEM_NAME_QTYGLUE`** · `기호에 따라` 정규화 |
+| **조리법 보강** | **`supplement_from_directions()` OFF** (v3.18) — `(조리법)` 노이즈 방지 |
 | **상비** | `pantry.json` — 후추 vs red pepper flakes 오매칭 방지 |
 | **복합명** | `버섯마늘소금` 등 | 내포 상비(소금) 분리, YOLO 오매칭 방지 |
 
 ---
 
-### custom_match.py — 자유 입력 재료 매칭 *(v3.16)*
+### custom_match.py — 자유 입력 재료 매칭 *(v3.16 → v3.18)*
 
-YOLO 30종 밖 사용자 입력(`custom_ingredients`)을 레시피 **unmapped** 항목과 부분 문자열 매칭.
+YOLO 30종 밖 사용자 입력(`custom_ingredients`)을 레시피 **unmapped** 항목과 부분 문자열·동의어 매칭.
 
 ```
 입력: {"김치": 1}
 레시피: "배추김치" → 매칭 → Coverage·7단계 기타/보유에 반영
+
+입력: {"쌀": 1}
+레시피: "멥쌀" · "쌀밥" → RICE_EQUIV 동의어 매칭 (1글자 쌀 허용)
 ```
 
 ---
@@ -223,10 +231,11 @@ rating    = Allrecipes: 실제 별점 / 한식: **없음** → 랭킹용 3.0 (UI
 | `rank_recipes(top_k, offset)` | 동일 자격 후 점수순 → **페이지 슬라이스** |
 | `diet_combo_count()` | 5단계 **복수 식단 AND** 조합 건수 |
 
-**필터 종류 (v3.16):**
+**필터 종류 (v3.18):**
 - **DB 출처**: 전체 / 한식(식약처) / Allrecipes
-- **카테고리** (출처별): Allrecipes L1 · 식약처 유형 (반찬, 국&찌개, …)
+- **카테고리** (출처별): Allrecipes L1 · 식약처 유형 (반찬, 국&찌개, …) — 번역 DB는 **`ALLRECIPES_L1_KO_ALIASES`**
 - **식단** (복수 AND): 채식 / 비건 / 유제품 없음 / 고단백 / 저탄수 / 저지방 / 무설탕 — **토글 버튼**
+- **레시피명 검색** (`name_query`): 공백 무시 부분 일치 — 6단계 UI 검색 폼
 
 ---
 
@@ -272,7 +281,7 @@ rating    = Allrecipes: 실제 별점 / 한식: **없음** → 랭킹용 3.0 (UI
   괄호 = **단독** 적용 건수 · **「선택 조합: N건」** = 6단계 총 수
 
 [6단계] 레시피 추천 목록
-  **페이지당 20건** · 이전/다음 · `총 N건 · a–b번째`
+  **레시피명 검색** (부분 일치) · **페이지당 20건** · 이전/다음 · `총 N건 · a–b번째`
   점수·커버리지 카드 + "상세 보기"
 
 [7단계] 레시피 상세
@@ -291,7 +300,7 @@ fridge-ai/
 ├── Dockerfile · docker-compose.yml
 ├── api/ · core/ · ui/ · data/
 ├── scripts/                   ← run_api.py, run_ui.py, docker-up.sh …
-├── training/                  ← train_yolo_byclaude.py, ablation_yolo.py
+├── training/                  ← train_yolo.py, ablation_yolo.py
 ├── presentation/              ← Ablation JSON, 학습 그래프
 └── docs/                      ← 계획서·PPT·요약 (docs/README.md)
 ```
@@ -334,12 +343,12 @@ cd ~/Documents/fridge-ai
 
 | 단계 | 상태 | 비고 |
 |------|------|------|
-| YOLO 데이터셋 준비 | ✅ 완료 | 3,049장, 30클래스, 80/10/10 |
-| YOLO 모델 학습 | ✅ 완료 | mAP@0.5 = 0.994 |
+| YOLO 데이터셋 준비 | ✅ 완료 | 3,196장, 30클래스, 2895/150/151 |
+| YOLO 모델 학습 | ✅ 완료 | test mAP@0.5 = **0.870** |
 | Core 모듈 구현 | ✅ 완료 | 파서, 랭커, 팬트리, 스케일러 |
 | FastAPI 서버 | ✅ 완료 | 5개 엔드포인트 |
-| Streamlit UI | ✅ 완료 | 7단계, v3.16 — 통합 재료·식단 토글·페이지네이션·4열 상세 |
-| 레시피 한국어 번역 | 🔄 진행 중 | GPT-4o-mini, 1,090개 |
+| Streamlit UI | ✅ 완료 | 7단계, v3.18 — 통합 재료·식단 토글·페이지네이션·4열 상세·**레시피명 검색** |
+| 레시피 한국어 번역 | ✅ 완료 | GPT-4o-mini, 1,090개 → **`recipes_merged_ko.csv`** |
 | Docker 컨테이너화 | ✅ 완료 | `Dockerfile`, `docker-compose.yml`, 로컬 Compose 기동 |
 | Cloud Run 배포 | ✅ 완료 | `fridge-api` + `fridge-ui`, GCP `fridge-ai-demo`, 서울 리전 |
 | 발표 자료 | ⬜ 미착수 | Week 8 예정 — Cloud Run UI URL로 시연 |
@@ -351,7 +360,6 @@ cd ~/Documents/fridge-ai
 | 한계 | 설명 | 개선 방향 |
 |------|------|----------|
 | 탐지 클래스 30개 제한 | 김치·두부 등 한식 재료 | **custom_ingredients** + 7단계 기타 열 (부분 매칭) |
-| val/test에 augmentation 포함 | 성능 수치가 실제보다 높게 나올 수 있음 | 원본 이미지로 재평가 필요 |
 | 키워드 기반 필터링 | ML 기반보다 정확도 낮음 | 임베딩 기반 의미 매칭으로 개선 가능 |
 | 한식 조리 시간·별점 | 식약처 API에 없음 | UI에서 숨김·조리방법만 표시 |
-| 레시피 ~2,107개 | 상업 서비스 대비 적음 | 크롤링 또는 공공 API로 확장 |
+| 레시피 ~2,236개 | 상업 서비스 대비 적음 | 크롤링 또는 공공 API로 확장 |

@@ -39,6 +39,10 @@ class RecipeFiltersIn(BaseModel):
         default=None,
         description="복수 식단 필터 — 모두 만족(AND)하는 레시피만",
     )
+    name_query: str | None = Field(
+        default=None,
+        description="레시피명 부분 검색 (예: 밥 → 컵밥·비빔밥)",
+    )
 
 
 class RecipeQuery(BaseModel):

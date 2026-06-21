@@ -49,6 +49,7 @@ def search_recipes(
     category: str | None = None,
     diet: str | None = None,
     diets: list[str] | None = None,
+    name_query: str | None = None,
     top_k: int = 20,
     offset: int = 0,
     min_detected_used: int = 1,
@@ -70,6 +71,8 @@ def search_recipes(
         filter_body["diets"] = diets
     elif diet:
         filter_body["diet"] = diet
+    if name_query and name_query.strip():
+        filter_body["name_query"] = name_query.strip()
     if filter_body:
         body["filters"] = filter_body
     r = requests.post(_url(base, "/recipes"), json=body, timeout=60)

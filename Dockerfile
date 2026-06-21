@@ -19,6 +19,7 @@ COPY scripts/ scripts/
 COPY best.pt best.pt
 
 ENV PYTHONUNBUFFERED=1 \
-    YOLO_WEIGHTS=/app/best.pt
+    YOLO_WEIGHTS=/app/best.pt \
+    RECIPES_CSV=/app/data/recipes_merged_ko.csv
 
 EXPOSE 8000 8501

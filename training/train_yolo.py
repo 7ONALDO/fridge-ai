@@ -9,10 +9,10 @@ Kaggle 사용법:
   3) 새 셀에서 실행:
 
        !pip install -q ultralytics pyyaml
-       !python training/train_yolo_byclaude.py
+       !python training/train_yolo.py
 
 로컬 사용법:
-  YOLO_DATA_ROOT=/path/to/dataset python training/train_yolo_byclaude.py
+  YOLO_DATA_ROOT=/path/to/dataset python training/train_yolo.py
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 환경변수 (선택 — 기본값으로도 바로 실행 가능):

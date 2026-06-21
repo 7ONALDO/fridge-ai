@@ -26,32 +26,32 @@
 | **배포 (공개)** | Google Cloud Run | 발표·시연 URL |
 
 ### 4. 데이터셋
-- YOLO 학습: Smart Refrigerator YOLOv11 (Roboflow), 3,049장, 30클래스, 80/10/10
+- YOLO 학습: Smart Refrigerator YOLOv11 (Roboflow), 3,196장, 30클래스, train 2895 / valid 150 / test 151
 - 30개 클래스: apple, banana, beef, blueberries, bread, butter, carrot, cheese,
   chicken, chicken_breast, chocolate, corn, eggs, flour, goat_cheese, green_beans,
   ground_beef, ham, heavy_cream, lime, milk, mushrooms, onion, potato, shrimp,
   spinach, strawberries, sugar, sweet_potato, tomato
-- 레시피: 식약처(한식) 1,146개 + allrecipes(영어→한국어 번역 중) 1,090개
+- 레시피: 식약처(한식) 1,146개 + allrecipes 1,090개 → **`recipes_merged_ko.csv`** (GPT 번역 병합)
 
 ### 5. 모델 학습
 - 모델: YOLOv11n (COCO pretrained → 파인튜닝)
 - 설정: AdamW, lr=0.001, cos_lr, 100 epochs, batch=16, imgsz=640
-- 결과: mAP@0.5 = 0.994, mAP@0.5:0.95 = 0.839, Recall = 0.989
+- 결과 (test 151장): mAP@0.5 = **0.870**, mAP@0.5:0.95 = **0.569**, Recall = **0.879**
 
 ### 6. 시스템 4층 구조
 ```
 Client Layer  → Streamlit UI (7단계 화면)
 App Layer     → FastAPI (5개 엔드포인트)
 AI Core Layer → YOLO → Normalizer → Ranker → Pantry → Scaler
-Storage Layer → best.pt, recipes_merged.csv, mapping.json, pantry.json
+Storage Layer → best.pt, recipes_merged_ko.csv, mapping.json, pantry.json
 ```
 
 ### 7. 각 모듈 설명 (core/)
 - **normalizer.py**: YOLO 탐지 결과 → 30개 표준 클래스로 정규화 (mapping.json 기반)
-- **ingredient_parser.py**: 레시피 재료 파싱 + **`supplement_from_directions`** (조리법 보강) + 섹션 헤더(`양념장 :` 등)
-- **custom_match.py**: YOLO 30종 밖 **`custom_ingredients`** ↔ 레시피 unmapped 부분 매칭
+- **ingredient_parser.py**: 레시피 재료 파싱 · **`resolve_parse_source()`** (한글 본문) · 노이즈 필터 · `(40g)` 괄호 유지 · **`supplement_from_directions` OFF (v3.18)**
+- **custom_match.py**: YOLO 30종 밖 **`custom_ingredients`** ↔ unmapped · **`RICE_EQUIV`** (`쌀`↔`멥쌀`)
 - **pantry.py**: 재료 **4구간** — 🧊보유 / 🛒추가구매 / 🏠상비 / 📋**기타** — **4열 UI**
-- **ranker.py**: score + **`count_rankable_recipes`** + **`rank_recipes(offset)`** 페이지네이션 · **`diets[]` AND**
+- **ranker.py**: score + **`count_rankable_recipes`** + **`rank_recipes(offset)`** · **`name_query`** · **`diets[]` AND**
 - **scaler.py**: 원본 인분 → 요청 인분 비례 재료량 계산
 
 ### 8. FastAPI 엔드포인트 5개
@@ -63,7 +63,7 @@ Storage Layer → best.pt, recipes_merged.csv, mapping.json, pantry.json
 
 ### 9. Streamlit UI 7단계
 1 사진 업로드 → 2 **통합 재료 표**(−/+·단일 추가) → 3 레시피 DB → 4 카테고리
-→ 5 **식단 토글 복수(AND)** → 6 **페이지네이션(20)** → 7 **4열** 상세
+→ 5 **식단 토글 복수(AND)** → 6 **페이지네이션(20)+레시피명 검색** → 7 **4열** 상세
 
 **v3.16 UI**: 통합 재료 · **custom** · 식단 **토글 AND** · **페이지당 20** · **4열(기타)** · `diet_combo_count()`
 
@@ -86,7 +86,7 @@ Storage Layer → best.pt, recipes_merged.csv, mapping.json, pantry.json
 | FastAPI 서버 | ✅ 완료 |
 | Core 모듈 | ✅ 완료 |
 | Streamlit UI | ✅ 완료 |
-| 레시피 한국어 번역 | 🔄 진행 중 |
+| 레시피 한국어 번역 | ✅ 완료 (`recipes_merged_ko.csv`) |
 | Docker (로컬) | ✅ 완료 |
 | Cloud Run (공개) | ✅ 완료 |
 

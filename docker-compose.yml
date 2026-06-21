@@ -14,6 +14,7 @@ services:
       - "8000:8000"
     environment:
       YOLO_WEIGHTS: /app/best.pt
+      RECIPES_CSV: /app/data/recipes_merged_ko.csv
     command:
       - python
       - -m

@@ -13,12 +13,16 @@ from core.custom_match import (
     custom_names_set,
     unmapped_recipe_items,
 )
-from core.ingredient_parser import ParsedIngredient, parse_ingredients, supplement_from_directions
+from core.ingredient_parser import (
+    ParsedIngredient,
+    parse_ingredients,
+    resolve_parse_source,
+)
 from core.normalizer import normalize_detections
-from core.recipe_categories import UI_NONE
+from core.recipe_categories import UI_NONE, allrecipes_l1_matches
 
 ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_RECIPES = ROOT / "data" / "recipes_merged.csv"
+DEFAULT_RECIPES = ROOT / "data" / "recipes_merged_ko.csv"
 
 ALPHA, BETA, GAMMA = 0.5, 0.3, 0.2
 MAX_SHORTAGE = 2
@@ -66,6 +70,7 @@ class RecipeFilters:
     category: str | None = None
     diet: str | None = None  # 단일 선택(하위 호환)
     diets: list[str] = field(default_factory=list)
+    name_query: str | None = None  # 레시피명 부분 검색 (예: 밥 → 컵밥)
 
     def active_diets(self) -> list[str]:
         if self.diets:
@@ -95,10 +100,11 @@ class RecipeRecord:
     parsed: list[ParsedIngredient] = field(repr=False)
     requirements: frozenset[str] = field(repr=False)
     unmapped: list[ParsedIngredient] = field(repr=False)
+    ingredient_parse_source: str = "english"
 
     @property
     def parse_source(self) -> str:
-        return "korean" if self.source == "foodsafety" else "english"
+        return self.ingredient_parse_source
 
 
 @dataclass
@@ -189,11 +195,13 @@ def _match_category(recipe: RecipeRecord, category: str | None) -> bool:
             return False
         return parts[1] == key
 
-    # allrecipes — L1 또는 L2 (``Desserts/Pies``)
+    # allrecipes — L1 (영문 키 또는 번역 한글 L1)
     if "/" in key:
         segs = key.split("/", 1)
         return len(parts) >= 2 and parts[0] == segs[0] and parts[1] == segs[1]
-    return bool(parts) and parts[0] == key
+    if not parts:
+        return False
+    return allrecipes_l1_matches(key, parts[0])
 
 
 def _parse_nutrition_number(nutrition: str, label: str) -> float | None:
@@ -269,6 +277,11 @@ def passes_filters(recipe: RecipeRecord, filters: RecipeFilters | None) -> bool:
     for diet_key in filters.active_diets():
         if not _match_diet(recipe, diet_key):
             return False
+    if filters.name_query:
+        q = re.sub(r"\s+", "", filters.name_query.strip())
+        name = re.sub(r"\s+", "", recipe.recipe_name or "")
+        if q and q not in name:
+            return False
     return True
 
 
@@ -293,13 +306,10 @@ class RecipeStore:
                     seen_urls.add(url)
 
                 source = (row.get("source") or "allrecipes").strip()
-                parse_source = "korean" if source == "foodsafety" else "english"
                 ingredients = row.get("ingredients") or ""
                 directions = (row.get("directions") or "").strip()
+                parse_source = resolve_parse_source(source, ingredients, directions)
                 parsed = parse_ingredients(ingredients, source=parse_source)
-                parsed = supplement_from_directions(
-                    parsed, directions, source=parse_source
-                )
 
                 record = RecipeRecord(
                     recipe_id=recipe_id,
@@ -317,6 +327,7 @@ class RecipeStore:
                     nutrition=(row.get("nutrition") or "").strip(),
                     img_src=(row.get("img_src") or "").strip(),
                     source=source,
+                    ingredient_parse_source=parse_source,
                     parsed=parsed,
                     requirements=_recipe_requirements(parsed),
                     unmapped=unmapped_recipe_items(parsed),

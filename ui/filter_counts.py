@@ -8,7 +8,13 @@ from core.ranker import (
     RecipeStore,
     count_rankable_recipes,
 )
-from core.recipe_categories import ALLRECIPES_L1, FOODSAFETY_SUBTYPES, UI_NONE
+from core.recipe_categories import (
+    ALLRECIPES_L1,
+    FOODSAFETY_SUBTYPES,
+    UI_NONE,
+    combined_category_options,
+    parse_composite_category,
+)
 
 DIET_KEYS = [
     UI_NONE,
@@ -100,13 +106,34 @@ def category_counts(
     src = _norm_source(source)
     if src == "foodsafety":
         keys = [UI_NONE] + [k for k, _ in FOODSAFETY_SUBTYPES]
-    elif src == "allrecipes":
+        return {
+            key: _count(
+                ingredients,
+                custom_ingredients,
+                source=src,
+                category=_norm_category(key),
+            )
+            for key in keys
+        }
+    if src == "allrecipes":
         keys = [UI_NONE] + [k for k, _ in ALLRECIPES_L1]
-    else:
-        return {UI_NONE: _count(ingredients, custom_ingredients)}
+        return {
+            key: _count(
+                ingredients,
+                custom_ingredients,
+                source=src,
+                category=_norm_category(key),
+            )
+            for key in keys
+        }
     return {
-        key: _count(ingredients, custom_ingredients, source=src, category=key)
-        for key in keys
+        key: _count(
+            ingredients,
+            custom_ingredients,
+            source=parse_composite_category(key)[0],
+            category=parse_composite_category(key)[1],
+        )
+        for key, _ in combined_category_options()
     }
 
 

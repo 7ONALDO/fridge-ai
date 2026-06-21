@@ -53,7 +53,7 @@ if not Path(PROJECT).parent.exists():
 
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# data.yaml 탐색 (train_yolo_byclaude.py와 동일 로직)
+# data.yaml 탐색 (train_yolo.py와 동일 로직)
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 def find_data_yaml() -> Path:
