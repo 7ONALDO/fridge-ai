@@ -17,7 +17,6 @@
 3. **Cloud Run 배포** — Google Cloud (`fridge-ai-demo`, 서울 리전)에 API·UI 각각 배포, 인터넷 URL로 접속 가능
 4. **한국어 DB·파서 정합 (v3.18)** — `recipes_merged_ko.csv` 기본, 번역 레시피 파서·노이즈 필터, 6단계 **레시피명 검색**, `쌀`↔`멥쌀` custom 매칭
 
-> 발표·시연 시 **Cloud Run UI URL** 하나만 공유하면 됩니다.
 
 ## 기능 요약
 
