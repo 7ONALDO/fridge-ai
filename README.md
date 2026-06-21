@@ -15,7 +15,8 @@
 1. **앱 구현** — FastAPI 5개 API + Streamlit 7단계 UI + Core 로직
 2. **로컬 Docker** — `Dockerfile` + `docker-compose.yml`로 API·UI 한 번에 실행
 3. **Cloud Run 배포** — Google Cloud (`fridge-ai-demo`, 서울 리전)에 API·UI 각각 배포, 인터넷 URL로 접속 가능
-4. **한국어 DB·파서 정합 (v3.18)** — `recipes_merged_ko.csv` 기본, 번역 레시피 파서·노이즈 필터, 6단계 **레시피명 검색**, `쌀`↔`멥쌀` custom 매칭
+4. **한국어 DB·파서 정합** — `recipes_merged_ko.csv` 기본, 번역 레시피 파서·노이즈 필터, 6단계 **레시피명 검색**, `쌀`↔`멥쌀` custom 매칭
+
 
 
 ## 기능 요약
@@ -54,7 +55,7 @@
 | 국·찌개 | 국·찌개 |
 | 기타 | 위 분류 외 |
 
-> 구버전 **식사(아침/점심/…)** · **5개국 요리** 필터는 폐기. Allrecipes는 path L1로 대체.
+
 
 ### 출처별 메타 (UI 표시)
 
@@ -218,7 +219,7 @@ gcloud builds submit --tag \
 
 - **Cold start**: 첫 요청 시 YOLO 모델 로딩으로 30초~1분 걸릴 수 있음
 - **비용 절약**: 발표 후 `gcloud run services delete fridge-api fridge-ui --region asia-northeast3`
-- 상세 절차·트러블슈팅: `docs/fridge-recipe-plan-v3.md` §5.7
+
 
 ## API 예시 (`POST /recipes`)
 
@@ -266,10 +267,4 @@ fridge-ai/
 └── smart refrigerator.yolov11/   ← YOLO 학습 데이터 (대용량)
 ```
 
-## 문서
 
-- 목록: [`docs/README.md`](docs/README.md)
-- 계획서: [`docs/fridge-recipe-plan-v3.md`](docs/fridge-recipe-plan-v3.md) (§5.7 배포 · v3.18 · 부록 P·Q)
-- 요약: [`docs/project-final-summary.md`](docs/project-final-summary.md)
-- PPT: [`docs/ppt-slides-v3.md`](docs/ppt-slides-v3.md)
-- 학습: `training/train_yolo.py` · Ablation: `training/ablation_yolo.py`
